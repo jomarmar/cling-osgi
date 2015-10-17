@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/cling.iml" filepath="$PROJECT_DIR$/cling.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/cling/cling-core.iml" filepath="$PROJECT_DIR$/utils/cling/cling-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/basedriver/cling-osgi-basedriver.iml" filepath="$PROJECT_DIR$/basedriver/cling-osgi-basedriver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tests/cling-osgi-tests.iml" filepath="$PROJECT_DIR$/tests/cling-osgi-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tests/common/cling-osgi-tests-common.iml" filepath="$PROJECT_DIR$/tests/common/cling-osgi-tests-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tests/devices/simple/cling-osgi-tests-devices-simple.iml" filepath="$PROJECT_DIR$/tests/devices/simple/cling-osgi-tests-devices-simple.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tests/integration/cling-osgi-tests-integration.iml" filepath="$PROJECT_DIR$/tests/integration/cling-osgi-tests-integration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/osgi-wrappers.iml" filepath="$PROJECT_DIR$/utils/osgi-wrappers.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/seamless-http/seamless-http.iml" filepath="$PROJECT_DIR$/utils/seamless-http/seamless-http.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/seamless-util/seamless-util.iml" filepath="$PROJECT_DIR$/utils/seamless-util/seamless-util.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/seamless-xml/seamless-xml.iml" filepath="$PROJECT_DIR$/utils/seamless-xml/seamless-xml.iml" />
+    </modules>
+  </component>
+</project>

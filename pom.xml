@@ -11,7 +11,7 @@
     <groupId>org.fourthline.cling.osgi</groupId>
     <artifactId>cling</artifactId>
     <packaging>pom</packaging>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>2.0.0</version>
 
     <modules>
         <module>utils</module>
@@ -55,7 +55,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
 
         <seamless.version>1.1.1</seamless.version>
-        <cling.version>2.1.0-SNAPSHOT</cling.version>
+        <cling.version>2.0.0</cling.version>
         <slf4j.version>1.7.12</slf4j.version>
         <osgi.version>5.0.0</osgi.version>
         <commons.codec.version>1.4</commons.codec.version>
@@ -63,6 +63,9 @@
         <paxexam.version>3.4.0</paxexam.version>
 
         <karaf.version>3.0.5</karaf.version>
+
+        <aether.version>2.4.3</aether.version>
+        <depends.maven.plugin.version>1.2</depends.maven.plugin.version>
 
         <maven.bundle.plugin.version>2.4.0</maven.bundle.plugin.version>
     </properties>
