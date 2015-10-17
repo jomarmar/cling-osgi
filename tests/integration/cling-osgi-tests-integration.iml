@@ -76,17 +76,15 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.ops4j.pax.tinybundles:tinybundles:2.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: biz.aQute.bnd:bndlib:2.1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.ops4j.base:ops4j-base-lang:1.4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.fourthline.cling:cling-osgi-tests-common:2.0.1" level="project" />
+    <orderEntry type="module" module-name="cling-osgi-tests-common" />
     <orderEntry type="module" module-name="cling-core" />
-    <orderEntry type="library" name="Maven: org.fourthline.cling:cling-osgi-basedriver:2.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.fourthline.cling:cling-core:2.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.seamless:seamless-util:1.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.seamless:seamless-http:1.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.seamless:seamless-xml:1.1.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.httpcomponents:httpcore:4.2.3" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.httpcomponents:httpclient:4.2.2" level="project" />
+    <orderEntry type="module" module-name="cling-osgi-basedriver" />
+    <orderEntry type="library" name="Maven: org.fourthline.cling:cling-core:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.seamless:seamless-util:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.seamless:seamless-http:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.seamless:seamless-xml:1.1.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.fourthline.cling:cling-osgi-tests-devices-simple:2.0.1" level="project" />
+    <orderEntry type="module" module-name="cling-osgi-tests-devices-simple" />
     <orderEntry type="library" scope="TEST" name="Maven: org.ops4j.pax.exam:pax-exam-link-mvn:3.4.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.ops4j.pax.url:pax-url-link:1.6.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.ops4j.pax.url:pax-url-commons:1.6.0" level="project" />
