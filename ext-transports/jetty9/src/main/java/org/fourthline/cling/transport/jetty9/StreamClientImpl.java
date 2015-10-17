@@ -18,7 +18,13 @@ package org.fourthline.cling.transport.jetty9;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpExchange;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.client.api.Result;
+import org.eclipse.jetty.client.util.ByteBufferContentProvider;
 import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
@@ -37,6 +43,8 @@ import org.seamless.util.Exceptions;
 import org.seamless.util.MimeType;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -153,6 +161,123 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
             log.info("Error stopping HTTP client: " + ex);
         }
     }
+
+    @Override
+    public StreamResponseMessage sendRequest(StreamRequestMessage requestMessage) throws InterruptedException {
+
+        final UpnpRequest requestOperation = requestMessage.getOperation();
+        if (log.isLoggable(Level.FINE))
+            log.fine(
+                    "Preparing HTTP request message with method '"
+                            + requestOperation.getHttpMethodName()
+                            + "': " + requestMessage
+            );
+
+        Request request = applyRequestURLMethod(requestMessage);
+        request = applyRequestHeaders(requestMessage, request);
+        request = applyRequestBody(requestMessage, request);
+
+        request.send(new Response.CompleteListener() {
+            @Override
+            public void onComplete(Result result) {
+                // Your logic here
+            }
+        });
+
+
+        return null;
+    }
+
+    protected Request applyRequestURLMethod(StreamRequestMessage requestMessage) {
+        final UpnpRequest requestOperation = requestMessage.getOperation();
+        if (log.isLoggable(Level.FINE))
+            log.fine(
+                    "Preparing HTTP request message with method '"
+                            + requestOperation.getHttpMethodName()
+                            + "': " + requestMessage
+            );
+
+        Request request = client.newRequest(requestOperation.getURI().toString());
+        request.method(requestOperation.getHttpMethodName());
+    }
+
+    protected Request applyRequestHeaders(StreamRequestMessage requestMessage, Request request) {
+        // Headers
+        UpnpHeaders headers = requestMessage.getHeaders();
+        if (log.isLoggable(Level.FINE))
+            log.fine("Writing headers on HttpContentExchange: " + headers.size());
+        // TODO Always add the Host header
+        // TODO: ? setRequestHeader(UpnpHeader.Type.HOST.getHttpName(), );
+        // Add the default user agent if not already set on the message
+        if (!headers.containsKey(UpnpHeader.Type.USER_AGENT)) {
+            request.header(
+                    UpnpHeader.Type.USER_AGENT.getHttpName(),
+                    getConfiguration().getUserAgentValue(
+                            requestMessage.getUdaMajorVersion(),
+                            requestMessage.getUdaMinorVersion())
+            );
+        }
+        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+            for (String v : entry.getValue()) {
+                String headerName = entry.getKey();
+                if (log.isLoggable(Level.FINE))
+                    log.fine("Setting header '" + headerName + "': " + v);
+                request.header(headerName, v);
+            }
+        }
+
+        return request;
+    }
+
+    protected Request applyRequestBody(StreamRequestMessage requestMessage, Request request) {
+        // Body
+        if (requestMessage.hasBody()) {
+            if (requestMessage.getBodyType() == UpnpMessage.BodyType.STRING) {
+                if (log.isLoggable(Level.FINE))
+                    log.fine("Writing textual request body: " + requestMessage);
+
+                MimeType contentType =
+                        requestMessage.getContentTypeHeader() != null
+                                ? requestMessage.getContentTypeHeader().getValue()
+                                : ContentTypeHeader.DEFAULT_CONTENT_TYPE_UTF8;
+
+                String charset =
+                        requestMessage.getContentTypeCharset() != null
+                                ? requestMessage.getContentTypeCharset()
+                                : "UTF-8";
+                ByteBufferContentProvider buffer;
+                try {
+                    buffer = new ByteBufferContentProvider(Charset.forName(charset).encode(requestMessage.getBodyString()));
+                } catch (Exception ex) {
+                    throw new RuntimeException("Unsupported character encoding: " + charset, ex);
+                }
+                request.header(HttpHeader.CONTENT_LENGTH, String.valueOf(buffer.getLength()));
+                request.content(buffer, contentType.toString());
+
+            } else {
+                if (log.isLoggable(Level.FINE))
+                    log.fine("Writing binary request body: " + requestMessage);
+
+                if (requestMessage.getContentTypeHeader() == null)
+                    throw new RuntimeException(
+                            "Missing content type header in request message: " + requestMessage
+                    );
+                MimeType contentType = requestMessage.getContentTypeHeader().getValue();
+
+                ByteBufferContentProvider buffer;
+                try {
+                    buffer = new ByteBufferContentProvider(ByteBuffer.wrap(requestMessage.getBodyBytes()));
+                } catch (Exception ex) {
+                    throw new RuntimeException("Unsupported character encoding: " + charset, ex);
+                }
+                request.header(HttpHeader.CONTENT_LENGTH, String.valueOf(buffer.getLength()));
+                request.content(buffer, contentType.toString());
+            }
+        }
+
+        return request;
+    }
+
 
     static public class HttpContentExchange extends ContentExchange {
 
