@@ -118,11 +118,11 @@ public class InitialIntegrationTest extends BaseIntegration {
 
                 mavenBundle().groupId("commons-codec").artifactId("commons-codec").versionAsInProject().start(),
 
-                mavenBundle().groupId("org.fourthline.cling").artifactId("cling-core").versionAsInProject().start(),
-                mavenBundle().groupId("org.fourthline.cling").artifactId("cling-osgi-tests-common").versionAsInProject().start(),
+                mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-core").versionAsInProject().start(),
+                mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-osgi-tests-common").versionAsInProject().start(),
 
-                mavenBundle().groupId("org.fourthline.cling").artifactId("cling-osgi-basedriver").versionAsInProject().start(),
-                mavenBundle().groupId("org.fourthline.cling").artifactId("cling-osgi-tests-devices-simple").versionAsInProject().start(),
+                mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-osgi-basedriver").versionAsInProject().start(),
+                mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-osgi-tests-devices-simple").versionAsInProject().start(),
 
 
 
