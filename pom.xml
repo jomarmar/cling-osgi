@@ -51,18 +51,18 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
         <seamless.version>1.1.1</seamless.version>
         <cling.version>2.1.0-SNAPSHOT</cling.version>
         <slf4j.version>1.7.12</slf4j.version>
         <osgi.version>5.0.0</osgi.version>
-        <commons.codec.version>1.4</commons.codec.version>
+        <commons.codec.version>1.10</commons.codec.version>
         <commons.logging.version>1.1.1</commons.logging.version>
-        <paxexam.version>3.4.0</paxexam.version>
+        <paxexam.version>4.5.0</paxexam.version>
 
-        <karaf.version>3.0.5</karaf.version>
+        <karaf.version>4.0.2</karaf.version>
 
         <aether.version>2.4.3</aether.version>
         <depends.maven.plugin.version>1.2</depends.maven.plugin.version>
@@ -72,6 +72,14 @@
     </properties>
 
     <repositories>
+        <repository>
+            <id>central</id>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
         <repository>
             <id>4thline-repo</id>
             <url>http://4thline.org/m2</url>

@@ -103,7 +103,7 @@ public class InitialIntegrationTest extends BaseIntegration {
                         .useDeployFolder(false),
                 keepRuntimeFolder(),
                 logLevel(LogLevelOption.LogLevel.INFO),
-                KarafDistributionOption.features(karafStandardRepo, "eventadmin, jetty"),
+                KarafDistributionOption.features(karafStandardRepo, "eventadmin, jetty/8.1.14.v20131031"),
 
 
                 mavenBundle().groupId("org.osgi").artifactId("org.osgi.core").versionAsInProject().start(),
