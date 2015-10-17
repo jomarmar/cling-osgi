@@ -14,6 +14,7 @@
     <version>2.1.0-SNAPSHOT</version>
 
     <modules>
+        <module>ext-transports/jetty9</module>
         <module>utils</module>
         <module>basedriver</module>
         <module>tests</module>
@@ -93,7 +94,7 @@
 
         <pluginManagement>
             <plugins>
-                
+
                 <!-- Assembly -->
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
