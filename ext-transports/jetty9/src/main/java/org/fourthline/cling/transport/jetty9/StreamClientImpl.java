@@ -76,9 +76,10 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         // These are some safety settings, we should never run into these timeouts as we
         // do our own expiration checking
 //        client.setTimeout((configuration.getTimeoutSeconds()+5) * 1000);
-        client.setExecutor(Executors.newFixedThreadPool(4));
+        client.setIdleTimeout((configuration.getTimeoutSeconds()+5) * 1000);
+        //client.setExecutor(Executors.newFixedThreadPool(4));
         client.setConnectTimeout((configuration.getTimeoutSeconds()+5) * 1000);
-
+        ;
 //        client.setMaxRetries(configuration.getRequestRetryCount());
 
         try {
@@ -123,7 +124,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
 
                 try {
-                    ContentResponse response = listener.get(3, TimeUnit.SECONDS);
+                    ContentResponse response = listener.get(configuration.getTimeoutSeconds(), TimeUnit.SECONDS);
 
                    // log.info("RESPONSE RECEIVED: "+ new String(response.getContent(), Charset.forName("UTF-8")));
                     return createResponse(response);
@@ -132,12 +133,12 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
+
+                catch (TimeoutException e) {
+                    e.printStackTrace();
+                }
+
                 return null;
-//                catch (TimeoutException e) {
-//                    e.printStackTrace();
-//                }
-
-
 //                client.send(exchange);
 //                int exchangeState = exchange.waitForDone();
 //
