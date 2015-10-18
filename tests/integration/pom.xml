@@ -146,6 +146,12 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.fourthline.cling.osgi</groupId>
+            <artifactId>cling-transport-jetty9</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>

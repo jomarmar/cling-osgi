@@ -63,6 +63,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.fourthline.cling.osgi</groupId>
+            <artifactId>cling-transport-jetty9</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.fourthline.cling</groupId>
             <artifactId>cling-core</artifactId>
             <version>${cling.version}</version>

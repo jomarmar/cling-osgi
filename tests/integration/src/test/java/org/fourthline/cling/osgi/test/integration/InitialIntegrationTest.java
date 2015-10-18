@@ -103,7 +103,8 @@ public class InitialIntegrationTest extends BaseIntegration {
                         .useDeployFolder(false),
                 keepRuntimeFolder(),
                 logLevel(LogLevelOption.LogLevel.INFO),
-                KarafDistributionOption.features(karafStandardRepo, "eventadmin, jetty/8.1.14.v20131031"),
+                //KarafDistributionOption.features(karafStandardRepo, "eventadmin, jetty/8.1.14.v20131031"),
+                KarafDistributionOption.features(karafStandardRepo, "eventadmin, jetty"), // jetty 9
 
 
                 mavenBundle().groupId("org.osgi").artifactId("org.osgi.core").versionAsInProject().start(),
@@ -117,6 +118,8 @@ public class InitialIntegrationTest extends BaseIntegration {
                 //mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("httpcomponents-http-client").versionAsInProject().start(),
 
                 mavenBundle().groupId("commons-codec").artifactId("commons-codec").versionAsInProject().start(),
+
+                mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-transport-jetty9").versionAsInProject().start(),
 
                 mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-core").versionAsInProject().start(),
                 mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-osgi-tests-common").versionAsInProject().start(),
