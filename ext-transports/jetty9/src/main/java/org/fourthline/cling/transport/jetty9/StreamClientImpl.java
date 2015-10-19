@@ -126,7 +126,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
                 try {
                     ContentResponse response = listener.get(configuration.getTimeoutSeconds(), TimeUnit.SECONDS);
 
-                   // log.info("RESPONSE RECEIVED: "+ new String(response.getContent(), Charset.forName("UTF-8")));
+                   log.info(">>>>>>>>>>>>>>>    RESPONSE RECEIVED: "+ response.getStatus() +  "REQUEST: " + response.getRequest().getURI().toString());
                     return createResponse(response);
 
 
@@ -306,14 +306,14 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         // TODO Always add the Host header
         // TODO: ? setRequestHeader(UpnpHeader.Type.HOST.getHttpName(), );
         // Add the default user agent if not already set on the message
-        if (!headers.containsKey(UpnpHeader.Type.USER_AGENT)) {
-            request.header(
-                    UpnpHeader.Type.USER_AGENT.getHttpName(),
-                    getConfiguration().getUserAgentValue(
-                            requestMessage.getUdaMajorVersion(),
-                            requestMessage.getUdaMinorVersion())
-            );
-        }
+//        if (!headers.containsKey(UpnpHeader.Type.USER_AGENT)) {
+//            request.header(
+//                    UpnpHeader.Type.USER_AGENT.getHttpName(),
+//                    getConfiguration().getUserAgentValue(
+//                            requestMessage.getUdaMajorVersion(),
+//                            requestMessage.getUdaMinorVersion())
+//            );
+//        }
         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
             for (String v : entry.getValue()) {
                 String headerName = entry.getKey();
