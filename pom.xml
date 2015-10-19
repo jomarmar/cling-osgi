@@ -18,6 +18,7 @@
         <module>utils</module>
         <module>basedriver</module>
         <module>tests</module>
+        <module>modules/upnp-subscriber</module>
     </modules>
 
     <name>Cling</name>

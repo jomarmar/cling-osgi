@@ -1,0 +1,35 @@
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+			xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			>
+			
+	<bean   id="upnp-subscriber"
+			class="org.jemz.core.upnp.subscriber.internal.JFUPnPControl"
+			init-method="startup" 
+			destroy-method="shutdown">
+            <property name="bundleContext" ref="blueprintBundleContext"/>
+
+	</bean>
+
+	<reference-list id="upnp-device" interface="org.osgi.service.upnp.UPnPDevice"
+											availability="optional" 
+											member-type="service-object">
+		<reference-listener bind-method="registerUPnPDevice"
+							unbind-method="deregisterUPnPDevice">
+							<ref component-id="upnp-subscriber"/>
+		</reference-listener>
+	</reference-list>
+
+
+	<bean id="upnp-event-admin" class="org.jemz.core.upnp.subscriber.internal.TestEventListener"></bean>
+
+	<service ref="upnp-event-admin" interface="org.osgi.service.event.EventHandler">
+		<service-properties>
+			<entry key="event.topics" value="*" />
+		</service-properties>
+	</service>
+
+</blueprint>
+ 
+
+
