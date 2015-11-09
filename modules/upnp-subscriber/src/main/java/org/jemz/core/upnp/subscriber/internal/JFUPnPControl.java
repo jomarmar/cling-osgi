@@ -1,8 +1,11 @@
 package org.jemz.core.upnp.subscriber.internal;
 
+import org.fourthline.cling.binding.annotations.UpnpAction;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.upnp.UPnPAction;
 import org.osgi.service.upnp.UPnPDevice;
 import org.osgi.service.upnp.UPnPEventListener;
+import org.osgi.service.upnp.UPnPService;
 
 import java.util.Dictionary;
 import java.util.Locale;
@@ -19,6 +22,7 @@ public class JFUPnPControl implements UPnPEventListener {
         subscriber = new JFUPnPSubscriber(context, this);
 
         subscriber.subscribeEveryDeviceTypeServices("urn:schemas-upnp-org:device:BinaryLight:1");
+        subscriber.subscribeEveryDeviceTypeServices("urn:schemas-4thline-com:device:simple-test:1");
     }
 
     public void startup() {
@@ -33,7 +37,12 @@ public class JFUPnPControl implements UPnPEventListener {
 
     public void registerUPnPDevice(UPnPDevice device) {
         System.out.println("REGISTERING UPNPDEVICE: " + device.getDescriptions(String.valueOf(Locale.getDefault())));
-
+        for(UPnPService service : device.getServices()) {
+            System.out.println("SERVICE: " + service.getId() + " TYPE: " + service.getType());
+            for(UPnPAction action : service.getActions()) {
+                System.out.println(" ACTION: " + action.getName());
+            }
+        }
 
     }
 

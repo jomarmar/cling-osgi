@@ -80,7 +80,7 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
-            <version>${osgi.version}</version>
+            <version>${osgi.compendium.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -23,10 +23,14 @@ import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.osgi.basedriver.discover.UPnPDiscover;
 import org.fourthline.cling.osgi.basedriver.present.UPnPPresent;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 
 /**
  * @author Bruce Green
  */
+@Component
 public class Activator implements BundleActivator {
 
     final private static Logger log = Logger.getLogger(Activator.class.getName());
@@ -49,7 +53,7 @@ public class Activator implements BundleActivator {
         return upnpService;
     }
 
-    @Override
+    @Activate
     public void start(BundleContext context) throws Exception {
         Activator.plugin = this;
         this.context = context;
@@ -60,7 +64,7 @@ public class Activator implements BundleActivator {
         upnpService.getControlPoint().search();
     }
 
-    @Override
+    @Deactivate
     public void stop(BundleContext bundleContext) throws Exception {
         upnpService.shutdown();
     }
