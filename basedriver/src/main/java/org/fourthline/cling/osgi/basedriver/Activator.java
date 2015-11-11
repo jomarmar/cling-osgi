@@ -59,8 +59,8 @@ public class Activator implements BundleActivator {
         this.context = context;
 
         upnpService = new UpnpServiceImpl(new ApacheUpnpServiceConfiguration());
-        discover = new UPnPDiscover(context, upnpService);
-        present = new UPnPPresent(context, upnpService);
+        discover = new UPnPDiscover(upnpService);
+        present = new UPnPPresent(upnpService);
         upnpService.getControlPoint().search();
     }
 

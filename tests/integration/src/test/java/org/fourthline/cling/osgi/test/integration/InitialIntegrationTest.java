@@ -49,8 +49,6 @@ import org.osgi.framework.*;
 import org.osgi.service.upnp.UPnPAction;
 import org.osgi.service.upnp.UPnPDevice;
 import org.osgi.service.upnp.UPnPService;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -62,10 +60,6 @@ import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
 
-/**
- * TODO: This is broken, probably. There are many error messages in between all
- * the OS-shit-eye junk. Test still completes successfully.
- */
 @ExamReactorStrategy(PerClass.class)
 @RunWith(PaxExam.class)
 public class InitialIntegrationTest extends JFFrameworkTestSupport {
@@ -73,24 +67,10 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
 	static private final String INITIAL_TEST_DATA_ID = "initial";
 	static private final String SET_TEST_DATA_ID = "set";
 
-    private final List<UPnPDevice> upnpDevices = new ArrayList<>();
-
 	@Inject
 	BundleContext bundleContext = null;
 
-//	@Before
-//	@Override
-//	public void setup() throws Exception {
-//		super.setup();
-//	}
-//
-//	@After
-//	@Override
-//	public void tearDown() {
-//		super.tearDown();
-//	}
-
-    @org.ops4j.pax.exam.Configuration
+    @Configuration
     public Option[] config() {
         MavenArtifactUrlReference karafUrl = maven()
                 .groupId("org.apache.karaf")
@@ -142,21 +122,10 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
 
 
 	static private final String DEVICE_TYPE = "urn:schemas-4thline-com:device:simple-test:1";
-	static private final String SERVICE_TYPE = "urn:schemas-4thline-com:service:SimpleTest:1";
-
-	class GetTargetActionInvocation extends ActionInvocation {
-	    GetTargetActionInvocation(Service service, String name) {
-	        super(service.getAction(name));
-	        try {
-
-	        } catch (InvalidValueException ex) {
-	            System.err.println(ex.getMessage());
-	        }
-	    }
-	}
+	static private final String SERVICE_ID = "urn:4thline-com:serviceId:SimpleTest";
 
 
-    public UPnPDevice findUPnPTestDevice() {
+    private UPnPDevice findUPnPTestDevice() {
         String string = String.format("(%s=%s)", UPnPDevice.TYPE, DEVICE_TYPE);
 
         UPnPDevice dev = getOsgiService(UPnPDevice.class, string, 2000);
@@ -172,7 +141,7 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
 
 
 
-    public String bytesToString(byte[] bytes) {
+    private String bytesToString(byte[] bytes) {
         String string = new String();
 
         for (int i = 0; i < bytes.length; i++) {
@@ -182,7 +151,7 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
         return string;
     }
 
-    public byte[] toBytes(Byte[] Bytes) {
+    private byte[] toBytes(Byte[] Bytes) {
         byte[] bytes = new byte[Bytes.length];
         for (int i = 0; i < Bytes.length; i++) {
             bytes[i] = Bytes[i].byteValue();
@@ -191,7 +160,7 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
         return bytes;
     }
 
-    public String valueToString(Object value) {
+    private String valueToString(Object value) {
         String string;
 
         if (value == null) {
@@ -210,7 +179,7 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
         return string;
     }
 
-    public boolean validate(String name, String type, Object value, Object desired) {
+    private boolean validate(String name, String type, Object value, Object desired) {
         boolean matches;
 
         System.out.printf("=========================================\n");
@@ -249,14 +218,14 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
         return matches;
     }
 
-	public void doSimpleDeviceSetAction(final String name, String testDataId) {
+	private void doSimpleDeviceSetAction(final String name, String testDataId) {
         UPnPDevice dev = findUPnPTestDevice();
 
         for(UPnPService service : dev.getServices()) {
             System.out.println("serviceID: " + service.getId());
         }
 
-        UPnPService service = dev.getService("urn:4thline-com:serviceId:SimpleTest");
+        UPnPService service = dev.getService(SERVICE_ID);
         assertNotNull(service);
 
         for(UPnPAction action : service.getActions()) {
@@ -317,58 +286,10 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
         } catch (Exception e) {
             fail(e.getMessage());
         }
-
-
-
-
-//		Device device = getDevice(ServiceType.valueOf(SERVICE_TYPE));
-//		assertNotNull(device);
-//		Service service = getService(device, ServiceType.valueOf(SERVICE_TYPE));
-//		assertNotNull(service);
-//		Action action = getAction(service, name);
-//		assertNotNull(action);
-//
-//		TestData data = TestDataFactory.getInstance().getTestData(testDataId);
-//		assertNotNull(data);
-//
-//        final boolean[] tests = new boolean[1];
-//
-//        ActionInvocation setTargetInvocation = new SetTargetActionInvocation(service, name, data);
-//        getUpnpService().getControlPoint().execute(
-//                new ActionCallback(setTargetInvocation) {
-//
-//                    @Override
-//                    public void success(ActionInvocation invocation) {
-//                        System.out.printf("Successfully called action: %s\n", name);
-//                        // TODO: What is going on here...
-//                    }
-//
-//					@Override
-//                    public void failure(ActionInvocation invocation,
-//                                        UpnpResponse operation,
-//                                        String defaultMsg) {
-//                        System.err.println(defaultMsg);
-//
-//                        assertTrue(true);
-//                    }
-//                }
-//        );
-//
-//		try {
-//			Thread.sleep(5000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
 	}
-
-//	//@Test
-//	public void testSimpleDeviceGetAllVariablesAction() {
-//		doSimpleDeviceGetAction("GetAllVariables", INITIAL_TEST_DATA_ID);
-//	}
 
 	@Test
 	public void testSimpleDeviceSetAllVariablesAction() {
 		doSimpleDeviceSetAction("SetAllVariables", SET_TEST_DATA_ID);
-		//doSimpleDeviceGetAction("GetAllVariables", SET_TEST_DATA_ID);
 	}
 }

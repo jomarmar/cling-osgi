@@ -23,8 +23,8 @@ import org.fourthline.cling.UpnpService;
  */
 public class UPnPDiscover {
 
-	public UPnPDiscover(BundleContext context, UpnpService upnpService) {
-		upnpService.getControlPoint().getRegistry().addListener(new ClingRegistryListener(context, upnpService));
+	public UPnPDiscover(UpnpService upnpService) {
+		upnpService.getControlPoint().getRegistry().addListener(new ClingRegistryListener(upnpService));
 	}
 
 }

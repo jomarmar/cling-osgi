@@ -15,14 +15,22 @@
 
 package org.fourthline.cling.osgi.basedriver.discover;
 
+import org.fourthline.cling.controlpoint.SubscriptionCallback;
+import org.fourthline.cling.osgi.basedriver.impl.UPnPServiceImpl;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.component.ComponentFactory;
+import org.osgi.service.component.ComponentInstance;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.upnp.UPnPDevice;
 import org.osgi.service.upnp.UPnPEventListener;
+import org.osgi.service.upnp.UPnPService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.meta.Device;
@@ -31,8 +39,7 @@ import org.fourthline.cling.osgi.basedriver.impl.UPnPDeviceImpl;
 import org.fourthline.cling.registry.DefaultRegistryListener;
 import org.fourthline.cling.registry.Registry;
 
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -55,34 +62,44 @@ import java.util.logging.Logger;
  *
  * @author Bruce Green
  */
+
+@Component (
+
+)
 class ClingRegistryListener extends DefaultRegistryListener {
 
     private static final Logger log = Logger.getLogger(ClingRegistryListener.class.getName());
 
-    private Map<Device, UPnPDeviceBinding> deviceBindings = new Hashtable<Device, UPnPDeviceBinding>();
+    //private Map<Device, UPnPDeviceBinding> deviceBindings = new Hashtable<Device, UPnPDeviceBinding>();
     private BundleContext context;
+
     private UpnpService upnpService;
 
-    class UPnPDeviceBinding {
-        private ServiceRegistration reference;
-        private ServiceTracker tracker;
+    private ComponentFactory factory;
+    private ComponentInstance instance;
+    private UPnPDeviceImpl upnpDevice;
 
-        UPnPDeviceBinding(ServiceRegistration reference, ServiceTracker tracker) {
-            this.reference = reference;
-            this.tracker = tracker;
-        }
+    private Map<UPnPEventListener, List<SubscriptionCallback>> listenerCallbacks = new Hashtable();
 
-        public ServiceRegistration getServiceRegistration() {
-            return reference;
-        }
+//    class UPnPDeviceBinding {
+//        private ServiceRegistration reference;
+//        private ServiceTracker tracker;
+//
+//        UPnPDeviceBinding(ServiceRegistration reference, ServiceTracker tracker) {
+//            this.reference = reference;
+//            this.tracker = tracker;
+//        }
+//
+//        public ServiceRegistration getServiceRegistration() {
+//            return reference;
+//        }
+//
+//        public ServiceTracker getServiceTracker() {
+//            return tracker;
+//        }
+//    }
 
-        public ServiceTracker getServiceTracker() {
-            return tracker;
-        }
-    }
-
-    public ClingRegistryListener(BundleContext context, UpnpService upnpService) {
-        this.context = context;
+    public ClingRegistryListener(UpnpService upnpService) {
         this.upnpService = upnpService;
     }
 
@@ -95,19 +112,22 @@ class ClingRegistryListener extends DefaultRegistryListener {
     public void deviceAdded(Registry registry, @SuppressWarnings("rawtypes") Device device) {
         log.entering(this.getClass().getName(), "deviceAdded", new Object[]{registry, device});
 
-        UPnPDeviceImpl upnpDevice = new UPnPDeviceImpl(device);
+        upnpDevice = new UPnPDeviceImpl(device);
         if (device instanceof RemoteDevice) {
             String string = String.format("(%s=%s)",
                                           Constants.OBJECTCLASS, UPnPEventListener.class.getName()
             );
             try {
-                Filter filter = context.createFilter(string);
-                UPnPEventListenerTracker tracker = new UPnPEventListenerTracker(context, filter, upnpService, upnpDevice);
-                tracker.open();
+//                Filter filter = context.createFilter(string);
+//                UPnPEventListenerTracker tracker = new UPnPEventListenerTracker(context, filter, upnpService, upnpDevice);
+//                tracker.open();
 
-                ServiceRegistration registration = context.registerService(UPnPDevice.class.getName(), upnpDevice, upnpDevice.getDescriptions(null));
-                deviceBindings.put(device, new UPnPDeviceBinding(registration, tracker));
-            } catch (InvalidSyntaxException e) {
+                //ServiceRegistration registration = context.registerService(UPnPDevice.class.getName(), upnpDevice, upnpDevice.getDescriptions(null));
+                final Dictionary<String, Device> props = new Hashtable<>();
+                props.put(UPnPDeviceFactory.UPNP_CLING_DEVICE, device);
+                instance = factory.newInstance(props);
+                //deviceBindings.put(device, new UPnPDeviceBinding(registration, tracker));
+            } catch (Exception e) {
                 log.severe(String.format("Cannot add remote device (%s).", device.getIdentity().getUdn().toString()));
                 log.severe(e.getMessage());
             }
@@ -117,16 +137,95 @@ class ClingRegistryListener extends DefaultRegistryListener {
     @Override
     public void deviceRemoved(Registry registry, @SuppressWarnings("rawtypes") Device device) {
         log.entering(this.getClass().getName(), "deviceRemoved", new Object[]{registry, device});
+        instance.dispose();
+//        if (device instanceof RemoteDevice) {
+//            UPnPDeviceBinding data = deviceBindings.get(device);
+//            if (data == null) {
+//                log.warning(String.format("Unknown device %s removed.", device.getIdentity().getUdn().toString()));
+//            } else {
+//                data.getServiceRegistration().unregister();
+//                data.getServiceTracker().close();
+//                deviceBindings.remove(device);
+//            }
+//        }
+    }
 
-        if (device instanceof RemoteDevice) {
-            UPnPDeviceBinding data = deviceBindings.get(device);
-            if (data == null) {
-                log.warning(String.format("Unknown device %s removed.", device.getIdentity().getUdn().toString()));
-            } else {
-                data.getServiceRegistration().unregister();
-                data.getServiceTracker().close();
-                deviceBindings.remove(device);
+    @Reference(target = "(component.factory=upnpdevice.factory)")
+    public void bindFactory(final ComponentFactory factory) {
+        this.factory = factory;
+    }
+
+    public void unbindFactory(final ComponentFactory factory) {
+        this.factory = null;
+    }
+
+    @Reference (
+            service = UPnPEventListener.class,
+            cardinality = ReferenceCardinality.MULTIPLE
+    )
+    public void bindUPnPEventListener(UPnPEventListener listener, Map<String, ?> props) {
+        log.entering(this.getClass().getName(), "bindUPnPListener");
+
+        Filter filter = (Filter) props.get(UPnPEventListener.UPNP_FILTER);
+        if (filter != null) {
+            List<SubscriptionCallback> callbacks = new ArrayList<SubscriptionCallback>();
+            UPnPServiceImpl[] services = (UPnPServiceImpl[]) upnpDevice.getServices();
+            if (services != null) {
+                Dictionary descriptions = upnpDevice.getDescriptions(null);
+                boolean all = filter.match(descriptions);
+
+                if (all) {
+                    log.finer(String.format(
+                            "Matched UPnPEvent listener for device %s service: ALL.",
+                            upnpDevice.getDevice().getIdentity().getUdn().toString()
+                    ));
+                }
+
+                for (UPnPServiceImpl service : services) {
+                    boolean match = all;
+
+                    if (!match) {
+                        Dictionary dictionary = new Hashtable();
+                        for (Object key : Collections.list(descriptions.keys())) {
+                            dictionary.put(key, descriptions.get(key));
+                        }
+                        dictionary.put(UPnPService.ID, service.getId());
+                        dictionary.put(UPnPService.TYPE, service.getType());
+                        match = filter.match(dictionary);
+                        if (match) {
+                            log.finer(String.format(
+                                    "Matched UPnPEvent listener for device %s service: %s.",
+                                    upnpDevice.getDevice().getIdentity().getUdn().toString(), service.getId()
+                            ));
+                        }
+                    }
+
+                    if (match) {
+                        log.finer(String.format(
+                                "Creating subscription callback for device %s service: %s.",
+                                upnpDevice.getDevice().getIdentity().getUdn().toString(), service.getId()
+                        ));
+                        SubscriptionCallback callback = new UPnPEventListenerSubscriptionCallback(upnpDevice, service, listener);
+                        upnpService.getControlPoint().execute(callback);
+                        callbacks.add(callback);
+                    }
+                }
+            }
+
+            listenerCallbacks.put(listener, callbacks);
+        }
+    }
+
+    public void unbindUPnPEventListener(UPnPEventListener listener) {
+        log.entering(this.getClass().getName(), "removedService", new Object[]{ listener});
+
+        List<SubscriptionCallback> callbacks = listenerCallbacks.get(listener);
+        if (callbacks != null) {
+            for (SubscriptionCallback callback : callbacks) {
+                // TODO: callbacks are executed ... don't know how to remove them
             }
         }
+
+        listenerCallbacks.remove(listener);
     }
 }

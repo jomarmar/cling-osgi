@@ -15,24 +15,18 @@
 
 package org.fourthline.cling.osgi.basedriver.present;
 
+import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.DefaultServiceManager;
 import org.fourthline.cling.model.ValidationException;
 import org.fourthline.cling.model.action.ActionExecutor;
 import org.fourthline.cling.model.meta.*;
 import org.fourthline.cling.model.state.StateVariableAccessor;
 import org.fourthline.cling.model.types.*;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Filter;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.event.EventConstants;
-import org.osgi.service.event.EventHandler;
 import org.osgi.service.upnp.*;
-import org.fourthline.cling.UpnpService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,42 +68,11 @@ public class UPnPPresent {
 
     final private static Logger log = Logger.getLogger(UPnPPresent.class.getName());
 
-    //private static final String UPNP_EVENT_TOPIC = "org/osgi/service/upnp/UPnPEvent";
-    private UPnPDeviceTracker deviceTracker;
     private UpnpService upnpService;
     private Map<UPnPDevice, LocalDevice> registrations = new Hashtable<UPnPDevice, LocalDevice>();
 
-    public UPnPPresent(BundleContext context, UpnpService upnpService) {
+    public UPnPPresent( UpnpService upnpService) {
         this.upnpService = upnpService;
-        /*
-           * Track all UPnPDevices registered for export.
-           */
-//        String string = String.format("(&(%s=%s)(%s=%s))",
-//                                      Constants.OBJECTCLASS, UPnPDevice.class.getName(),
-//                                      UPnPDevice.UPNP_EXPORT, "*");
-//        try {
-//            Filter filter = context.createFilter(string);
-//
-//            deviceTracker = new UPnPDeviceTracker(context, upnpService, filter);
-//            deviceTracker.open();
-//        } catch (InvalidSyntaxException e) {
-//            log.severe("Cannot create UPnPDevice tracker.");
-//            log.severe("Cannot export UPnPDevices.");
-//            log.severe(e.getMessage());
-//        }
-
-
-        /*
-           * Track OSGi UPnP events. Local devices fire a UPnP event when
-           * a state variable that sends an event when changed.
-           */
-//        Dictionary<String, String> properties = new Hashtable<String, String>();
-//        properties.put(EventConstants.EVENT_TOPIC, UPNP_EVENT_TOPIC);
-//        context.registerService(
-//                EventHandler.class.getName(),
-//                new UPnPEventHandler(context),
-//                properties
-//        );
     }
 
     private Map<Action<LocalService<DataAdapter>>, ActionExecutor> createActionExecutors(UPnPAction[] actions) {

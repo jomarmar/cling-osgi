@@ -25,11 +25,7 @@ package org.fourthline.cling.osgi.basedriver.present;
 import java.util.*;
 import java.util.logging.Logger;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -40,7 +36,6 @@ import org.osgi.service.event.EventHandler;
 import org.osgi.service.upnp.UPnPDevice;
 import org.osgi.service.upnp.UPnPEventListener;
 import org.osgi.service.upnp.UPnPService;
-import org.osgi.util.tracker.ServiceTracker;
 
 @Component (
 		immediate = true,
@@ -48,48 +43,30 @@ import org.osgi.util.tracker.ServiceTracker;
 )
 public class UPnPEventHandler implements EventHandler {
     private static final Logger logger = Logger.getLogger(UPnPEventHandler.class.getName());
-	private ServiceTracker tracker;
-	private Map<UPnPEventListener, Map<String, Object>> uPnPEventListeners = new HashMap<>();
+	private static final Map<UPnPEventListener, Map<String, Object>> upnpEventListeners = new HashMap<>();
 
-	public UPnPEventHandler() {
-
-	}
-
-	public UPnPEventHandler(BundleContext context) {
-//		String string = String.format("(%s=%s)",
-//			Constants.OBJECTCLASS , UPnPEventListener.class.getName()
-//			);
-//		try {
-//			Filter filter = context.createFilter(string);
-//
-//			tracker = new ServiceTracker(context, filter, null);
-//			tracker.open();
-//		} catch (InvalidSyntaxException e) {
-//			logger.severe("Cannot create UPnPEventListener tracker.");
-//			logger.severe(e.getMessage());
-//		}
-	}
 
 	@Reference(name = "upnpEventListener", service = UPnPEventListener.class,
             cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
-//    @Reference
 	public void bindUPnPListener(UPnPEventListener listener, Map<String, Object> props) {
 		if(listener != null) {
-			uPnPEventListeners.put(listener, props);
+			upnpEventListeners.put(listener, props);
 		}
 	}
 
     public void unbindUPnPListener(UPnPEventListener listener) {
-
+		if(listener != null) {
+			upnpEventListeners.remove(listener);
+		}
     }
 
 	@Override
 	public void handleEvent(Event event) {
 		logger.entering(this.getClass().getName(), "handleEvent", new Object[] { event });
 
-		for(UPnPEventListener lst : uPnPEventListeners.keySet()) {
+		for(UPnPEventListener lst : upnpEventListeners.keySet()) {
 			boolean matches = true;
-			Map<String, Object> props = uPnPEventListeners.get(lst);
+			Map<String, Object> props = upnpEventListeners.get(lst);
 			Filter filter = (Filter) props.get(UPnPEventListener.UPNP_FILTER);
 			if (filter != null) {
 				matches = event.matches(filter);
@@ -103,26 +80,6 @@ public class UPnPEventHandler implements EventHandler {
 				);
 			}
 		}
-		
-//		ServiceReference[] references = tracker.getServiceReferences();
-//		if (references != null) {
-//			for (ServiceReference reference : references) {
-//				boolean matches = true;
-//				Filter filter = (Filter) reference.getProperty(UPnPEventListener.UPNP_FILTER);
-//				if (filter != null) {
-//					matches = event.matches(filter);
-//				}
-//
-//				if (matches) {
-//					UPnPEventListener listener = (UPnPEventListener) tracker.getService(reference);
-//					listener.notifyUPnPEvent(
-//						(String) event.getProperty(UPnPDevice.UDN),
-//						(String) event.getProperty(UPnPService.ID),
-//						(Dictionary) event.getProperty("upnp.events")
-//						);
-//				}
-//			}
-//		}
 	}
 }
 
