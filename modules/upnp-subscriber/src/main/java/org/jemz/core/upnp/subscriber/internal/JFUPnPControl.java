@@ -22,16 +22,17 @@ public class JFUPnPControl implements UPnPEventListener {
 
     public void setBundleContext(BundleContext context) {
 
+
+    }
+
+    @Activate
+    public void startup(BundleContext context) {
+        System.out.println("STARTING UP UPNPCONTROL");
         System.out.println("SUBSCRIBE TO EVENTS");
         subscriber = new JFUPnPSubscriber(context, this);
 
         subscriber.subscribeEveryDeviceTypeServices("urn:schemas-upnp-org:device:BinaryLight:1");
         subscriber.subscribeEveryDeviceTypeServices("urn:schemas-4thline-com:device:simple-test:1");
-    }
-
-    @Activate
-    public void startup() {
-        System.out.println("STARTING UP UPNPCONTROL");
 
     }
 
