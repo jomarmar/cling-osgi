@@ -43,7 +43,7 @@ public class JFUPnPControl implements UPnPEventListener {
 
     @Reference (
             name = "upnpDevice", service = UPnPDevice.class,
-            cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.STATIC
+            cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC
     )
     public void bindUPnPDevice(UPnPDevice device) {
         System.out.println("REGISTERING UPNPDEVICE: " + device.getDescriptions(String.valueOf(Locale.getDefault())));

@@ -39,11 +39,11 @@ import java.util.Map;
  */
 public class UPnPEventListenerSubscriptionCallback extends SubscriptionCallback {
 
-    private UPnPDeviceImpl device;
+    private UPnPDeviceFactory device;
     private UPnPServiceImpl service;
     private UPnPEventListener listener;
 
-    protected UPnPEventListenerSubscriptionCallback(UPnPDeviceImpl device, UPnPServiceImpl service, UPnPEventListener listener) {
+    protected UPnPEventListenerSubscriptionCallback(UPnPDeviceFactory device, UPnPServiceImpl service, UPnPEventListener listener) {
         super(service.getService());
 
         this.device = device;

@@ -183,6 +183,7 @@ public void bindUpnpService (IClingBasedriver service) {
 
     @Reference (
             service = UPnPEventListener.class,
+            policy = ReferencePolicy.DYNAMIC,
             cardinality = ReferenceCardinality.MULTIPLE
     )
     public void bindUPnPEventListener(UPnPEventListener listener, Map<String, ?> props) {
@@ -230,9 +231,9 @@ public void bindUpnpService (IClingBasedriver service) {
                                 "Creating subscription callback for device %s service: %s.",
                                 upnpDevice.getDevice().getIdentity().getUdn().toString(), service.getId()
                         ));
-//                        SubscriptionCallback callback = new UPnPEventListenerSubscriptionCallback(upnpDevice, service, listener);
-//                        upnpService.getControlPoint().execute(callback);
-//                        callbacks.add(callback);
+                        SubscriptionCallback callback = new UPnPEventListenerSubscriptionCallback(upnpDevice, service, listener);
+                        upnpService.getControlPoint().execute(callback);
+                        callbacks.add(callback);
                     }
                 }
             }
