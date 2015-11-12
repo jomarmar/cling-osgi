@@ -17,6 +17,7 @@ package org.fourthline.cling.osgi.basedriver.discover;
 
 import org.fourthline.cling.controlpoint.SubscriptionCallback;
 import org.fourthline.cling.osgi.basedriver.impl.UPnPServiceImpl;
+import org.fourthline.cling.osgi.basedriver.util.IClingBasedriver;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
@@ -25,9 +26,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.*;
 import org.osgi.service.upnp.UPnPDevice;
 import org.osgi.service.upnp.UPnPEventListener;
 import org.osgi.service.upnp.UPnPService;
@@ -66,7 +65,7 @@ import java.util.logging.Logger;
 @Component (
 
 )
-class ClingRegistryListener extends DefaultRegistryListener {
+public class ClingRegistryListener extends DefaultRegistryListener {
 
     private static final Logger log = Logger.getLogger(ClingRegistryListener.class.getName());
 
@@ -77,9 +76,19 @@ class ClingRegistryListener extends DefaultRegistryListener {
 
     private ComponentFactory factory;
     private ComponentInstance instance;
-    private UPnPDeviceImpl upnpDevice;
+    private UPnPDeviceFactory upnpDevice;
 
     private Map<UPnPEventListener, List<SubscriptionCallback>> listenerCallbacks = new Hashtable();
+
+    @Activate
+    public void start() {
+        upnpService.getControlPoint().getRegistry().addListener(this);
+    }
+
+    @Deactivate
+    public void stop() {
+
+    }
 
 //    class UPnPDeviceBinding {
 //        private ServiceRegistration reference;
@@ -98,10 +107,20 @@ class ClingRegistryListener extends DefaultRegistryListener {
 //            return tracker;
 //        }
 //    }
+@Reference(
+        service = IClingBasedriver.class
+)
+public void bindUpnpService (IClingBasedriver service) {
+    this.upnpService = service.getUpnpService();
+}
 
-    public ClingRegistryListener(UpnpService upnpService) {
-        this.upnpService = upnpService;
+    public void unbindUpnpService (IClingBasedriver service) {
+        this.upnpService = null;
     }
+
+//    public ClingRegistryListener(UpnpService upnpService) {
+//        this.upnpService = upnpService;
+//    }
 
     /*
       * When an external device is discovered wrap it with UPnPDeviceImpl,
@@ -112,7 +131,7 @@ class ClingRegistryListener extends DefaultRegistryListener {
     public void deviceAdded(Registry registry, @SuppressWarnings("rawtypes") Device device) {
         log.entering(this.getClass().getName(), "deviceAdded", new Object[]{registry, device});
 
-        upnpDevice = new UPnPDeviceImpl(device);
+        //upnpDevice = new UPnPDeviceImpl(device);
         if (device instanceof RemoteDevice) {
             String string = String.format("(%s=%s)",
                                           Constants.OBJECTCLASS, UPnPEventListener.class.getName()
@@ -126,6 +145,8 @@ class ClingRegistryListener extends DefaultRegistryListener {
                 final Dictionary<String, Device> props = new Hashtable<>();
                 props.put(UPnPDeviceFactory.UPNP_CLING_DEVICE, device);
                 instance = factory.newInstance(props);
+                upnpDevice = (UPnPDeviceFactory) instance.getInstance();
+                //upnpDevice = fact.getDevice();
                 //deviceBindings.put(device, new UPnPDeviceBinding(registration, tracker));
             } catch (Exception e) {
                 log.severe(String.format("Cannot add remote device (%s).", device.getIdentity().getUdn().toString()));
@@ -152,6 +173,7 @@ class ClingRegistryListener extends DefaultRegistryListener {
 
     @Reference(target = "(component.factory=upnpdevice.factory)")
     public void bindFactory(final ComponentFactory factory) {
+
         this.factory = factory;
     }
 
@@ -165,6 +187,9 @@ class ClingRegistryListener extends DefaultRegistryListener {
     )
     public void bindUPnPEventListener(UPnPEventListener listener, Map<String, ?> props) {
         log.entering(this.getClass().getName(), "bindUPnPListener");
+        if(upnpDevice == null) {
+            return;
+        }
 
         Filter filter = (Filter) props.get(UPnPEventListener.UPNP_FILTER);
         if (filter != null) {
@@ -205,9 +230,9 @@ class ClingRegistryListener extends DefaultRegistryListener {
                                 "Creating subscription callback for device %s service: %s.",
                                 upnpDevice.getDevice().getIdentity().getUdn().toString(), service.getId()
                         ));
-                        SubscriptionCallback callback = new UPnPEventListenerSubscriptionCallback(upnpDevice, service, listener);
-                        upnpService.getControlPoint().execute(callback);
-                        callbacks.add(callback);
+//                        SubscriptionCallback callback = new UPnPEventListenerSubscriptionCallback(upnpDevice, service, listener);
+//                        upnpService.getControlPoint().execute(callback);
+//                        callbacks.add(callback);
                     }
                 }
             }

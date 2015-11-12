@@ -22,6 +22,7 @@ import org.fourthline.cling.model.action.ActionExecutor;
 import org.fourthline.cling.model.meta.*;
 import org.fourthline.cling.model.state.StateVariableAccessor;
 import org.fourthline.cling.model.types.*;
+import org.fourthline.cling.osgi.basedriver.util.IClingBasedriver;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -71,9 +72,26 @@ public class UPnPPresent {
     private UpnpService upnpService;
     private Map<UPnPDevice, LocalDevice> registrations = new Hashtable<UPnPDevice, LocalDevice>();
 
-    public UPnPPresent( UpnpService upnpService) {
-        this.upnpService = upnpService;
+    public UPnPPresent() {
+
     }
+
+    @Reference (
+            service = IClingBasedriver.class
+    )
+    public void bindUpnpService (IClingBasedriver service) {
+
+
+
+        this.upnpService = service.getUpnpService();
+    }
+
+    public void unbindUpnpService (IClingBasedriver service) {
+        this.upnpService = null;
+    }
+
+
+
 
     private Map<Action<LocalService<DataAdapter>>, ActionExecutor> createActionExecutors(UPnPAction[] actions) {
         Map<Action<LocalService<DataAdapter>>, ActionExecutor> executors = new HashMap();

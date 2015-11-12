@@ -1,37 +1,51 @@
 package org.fourthline.cling.osgi.basedriver.discover;
 
+import org.fourthline.cling.controlpoint.SubscriptionCallback;
 import org.fourthline.cling.model.meta.*;
+import org.fourthline.cling.osgi.basedriver.impl.UPnPDeviceImpl;
 import org.fourthline.cling.osgi.basedriver.impl.UPnPIconImpl;
 import org.fourthline.cling.osgi.basedriver.impl.UPnPServiceImpl;
+import org.osgi.framework.Filter;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.upnp.UPnPDevice;
+import org.osgi.service.upnp.UPnPEventListener;
 import org.osgi.service.upnp.UPnPIcon;
 import org.osgi.service.upnp.UPnPService;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by jmartinez on 11/11/15.
  */
 @Component (
+        service = UPnPDevice.class,
         factory = "upnpdevice.factory"
 )
 public class UPnPDeviceFactory implements UPnPDevice {
 
     protected static final String UPNP_CLING_DEVICE = "upnp.cling.device";
 
+    private static final Logger log = Logger.getLogger(UPnPDeviceFactory.class.getName());
+
     private Device<?, ?, ?> device;
     private UPnPServiceImpl[] services;
     private Hashtable<String, UPnPService> servicesIndex;
     private UPnPIconImpl[] icons;
     private Dictionary<String, Object> descriptions = new Hashtable<String, Object>();
+    private Map<UPnPEventListener, List<SubscriptionCallback>> listenerCallbacks = new Hashtable();
+
+
 
 
     @Activate
     public void activate(final Map<String, ?> properties) {
         Device<?, ?, ?> dev = (Device<?, ?, ?>) properties.get(UPNP_CLING_DEVICE);
         if(dev != null) {
+            //this.upnpDevice = new UPnPDeviceImpl(dev);
             this.device = dev;
         }
 
@@ -119,10 +133,18 @@ public class UPnPDeviceFactory implements UPnPDevice {
         }
     }
 
+
+//    public UPnPDevice getDevice() {
+//        return upnpDevice;
+//    }
+
+
+
     @Override
     public UPnPService getService(String serviceId) {
         return (servicesIndex != null) ? servicesIndex.get(serviceId) : null;
     }
+
 
     @Override
     public UPnPService[] getServices() {
@@ -142,5 +164,76 @@ public class UPnPDeviceFactory implements UPnPDevice {
     public Device<?, ?, ?> getDevice() {
         return device;
     }
+//
+//
+//    @Reference(
+//            service = UPnPEventListener.class,
+//            cardinality = ReferenceCardinality.MULTIPLE
+//    )
+//    public void bindUPnPEventListener(UPnPEventListener listener, Map<String, ?> props) {
+//        log.entering(this.getClass().getName(), "bindUPnPListener");
+//
+//        Filter filter = (Filter) props.get(UPnPEventListener.UPNP_FILTER);
+//        if (filter != null) {
+//            List<SubscriptionCallback> callbacks = new ArrayList<SubscriptionCallback>();
+//            UPnPServiceImpl[] services = (UPnPServiceImpl[]) getServices();
+//            if (services != null) {
+//                Dictionary descriptions = getDescriptions(null);
+//                boolean all = filter.match(descriptions);
+//
+//                if (all) {
+//                    log.finer(String.format(
+//                            "Matched UPnPEvent listener for device %s service: ALL.",
+//                            getDevice().getIdentity().getUdn().toString()
+//                    ));
+//                }
+//
+//                for (UPnPServiceImpl service : services) {
+//                    boolean match = all;
+//
+//                    if (!match) {
+//                        Dictionary dictionary = new Hashtable();
+//                        for (Object key : Collections.list(descriptions.keys())) {
+//                            dictionary.put(key, descriptions.get(key));
+//                        }
+//                        dictionary.put(UPnPService.ID, service.getId());
+//                        dictionary.put(UPnPService.TYPE, service.getType());
+//                        match = filter.match(dictionary);
+//                        if (match) {
+//                            log.finer(String.format(
+//                                    "Matched UPnPEvent listener for device %s service: %s.",
+//                                    getDevice().getIdentity().getUdn().toString(), service.getId()
+//                            ));
+//                        }
+//                    }
+//
+//                    if (match) {
+//                        log.finer(String.format(
+//                                "Creating subscription callback for device %s service: %s.",
+//                                getDevice().getIdentity().getUdn().toString(), service.getId()
+//                        ));
+////                        SubscriptionCallback callback = new UPnPEventListenerSubscriptionCallback(this, service, listener);
+////                        getControlPoint().execute(callback);
+////                        callbacks.add(callback);
+//                    }
+//                }
+//            }
+//
+//            listenerCallbacks.put(listener, callbacks);
+//        }
+//    }
+//
+//    public void unbindUPnPEventListener(UPnPEventListener listener) {
+//        log.entering(this.getClass().getName(), "removedService", new Object[]{ listener});
+//
+//        List<SubscriptionCallback> callbacks = listenerCallbacks.get(listener);
+//        if (callbacks != null) {
+//            for (SubscriptionCallback callback : callbacks) {
+//                // TODO: callbacks are executed ... don't know how to remove them
+//            }
+//        }
+//
+//        listenerCallbacks.remove(listener);
+//    }
 
 }
