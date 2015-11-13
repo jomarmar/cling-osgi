@@ -76,7 +76,9 @@ public class ClingRegistryListener extends DefaultRegistryListener {
 
     private ComponentFactory factory;
     private ComponentInstance instance;
-    private UPnPDeviceFactory upnpDevice;
+    //private UPnPDeviceFactory upnpDevice;
+
+    private List<UPnPDeviceFactory> deviceList = new ArrayList<>();
 
     private Map<UPnPEventListener, List<SubscriptionCallback>> listenerCallbacks = new Hashtable();
 
@@ -145,7 +147,8 @@ public void bindUpnpService (IClingBasedriver service) {
                 final Dictionary<String, Device> props = new Hashtable<>();
                 props.put(UPnPDeviceFactory.UPNP_CLING_DEVICE, device);
                 instance = factory.newInstance(props);
-                upnpDevice = (UPnPDeviceFactory) instance.getInstance();
+                UPnPDeviceFactory upnpDevice = (UPnPDeviceFactory) instance.getInstance();
+                deviceList.add(upnpDevice);
                 //upnpDevice = fact.getDevice();
                 //deviceBindings.put(device, new UPnPDeviceBinding(registration, tracker));
             } catch (Exception e) {
@@ -188,57 +191,57 @@ public void bindUpnpService (IClingBasedriver service) {
     )
     public void bindUPnPEventListener(UPnPEventListener listener, Map<String, ?> props) {
         log.entering(this.getClass().getName(), "bindUPnPListener");
-        if(upnpDevice == null) {
-            return;
-        }
+
 
         Filter filter = (Filter) props.get(UPnPEventListener.UPNP_FILTER);
         if (filter != null) {
-            List<SubscriptionCallback> callbacks = new ArrayList<SubscriptionCallback>();
-            UPnPServiceImpl[] services = (UPnPServiceImpl[]) upnpDevice.getServices();
-            if (services != null) {
-                Dictionary descriptions = upnpDevice.getDescriptions(null);
-                boolean all = filter.match(descriptions);
+            for (UPnPDeviceFactory device : deviceList) {
+                List<SubscriptionCallback> callbacks = new ArrayList<SubscriptionCallback>();
+                UPnPServiceImpl[] services = (UPnPServiceImpl[]) device.getServices();
+                if (services != null) {
+                    Dictionary descriptions = device.getDescriptions(null);
+                    boolean all = filter.match(descriptions);
 
-                if (all) {
-                    log.finer(String.format(
-                            "Matched UPnPEvent listener for device %s service: ALL.",
-                            upnpDevice.getDevice().getIdentity().getUdn().toString()
-                    ));
-                }
+                    if (all) {
+                        log.finer(String.format(
+                                "Matched UPnPEvent listener for device %s service: ALL.",
+                                device.getDevice().getIdentity().getUdn().toString()
+                        ));
+                    }
 
-                for (UPnPServiceImpl service : services) {
-                    boolean match = all;
+                    for (UPnPServiceImpl service : services) {
+                        boolean match = all;
 
-                    if (!match) {
-                        Dictionary dictionary = new Hashtable();
-                        for (Object key : Collections.list(descriptions.keys())) {
-                            dictionary.put(key, descriptions.get(key));
+                        if (!match) {
+                            Dictionary dictionary = new Hashtable();
+                            for (Object key : Collections.list(descriptions.keys())) {
+                                dictionary.put(key, descriptions.get(key));
+                            }
+                            dictionary.put(UPnPService.ID, service.getId());
+                            dictionary.put(UPnPService.TYPE, service.getType());
+                            match = filter.match(dictionary);
+                            if (match) {
+                                log.finer(String.format(
+                                        "Matched UPnPEvent listener for device %s service: %s.",
+                                        device.getDevice().getIdentity().getUdn().toString(), service.getId()
+                                ));
+                            }
                         }
-                        dictionary.put(UPnPService.ID, service.getId());
-                        dictionary.put(UPnPService.TYPE, service.getType());
-                        match = filter.match(dictionary);
+
                         if (match) {
                             log.finer(String.format(
-                                    "Matched UPnPEvent listener for device %s service: %s.",
-                                    upnpDevice.getDevice().getIdentity().getUdn().toString(), service.getId()
+                                    "Creating subscription callback for device %s service: %s.",
+                                    device.getDevice().getIdentity().getUdn().toString(), service.getId()
                             ));
+                            SubscriptionCallback callback = new UPnPEventListenerSubscriptionCallback(device, service, listener);
+                            upnpService.getControlPoint().execute(callback);
+                            callbacks.add(callback);
                         }
                     }
-
-                    if (match) {
-                        log.finer(String.format(
-                                "Creating subscription callback for device %s service: %s.",
-                                upnpDevice.getDevice().getIdentity().getUdn().toString(), service.getId()
-                        ));
-                        SubscriptionCallback callback = new UPnPEventListenerSubscriptionCallback(upnpDevice, service, listener);
-                        upnpService.getControlPoint().execute(callback);
-                        callbacks.add(callback);
-                    }
                 }
-            }
 
-            listenerCallbacks.put(listener, callbacks);
+                listenerCallbacks.put(listener, callbacks);
+            }
         }
     }
 
