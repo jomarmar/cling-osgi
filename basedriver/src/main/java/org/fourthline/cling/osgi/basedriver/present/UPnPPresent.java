@@ -280,8 +280,8 @@ public class UPnPPresent {
 
 
     @Reference(name = "upnpDevice", service = UPnPDevice.class,
-            cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.STATIC,
-            target = "("+UPnPDevice.UPNP_EXPORT+"=*)"
+            cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.STATIC
+            //target = "("+UPnPDevice.UPNP_EXPORT+"=*)"
     )
     public void bindUPnPDevice(UPnPDevice dev) {
         log.finer(dev.toString());

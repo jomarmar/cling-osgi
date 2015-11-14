@@ -31,8 +31,8 @@ public class JFUPnPControl implements UPnPEventListener {
         System.out.println("SUBSCRIBE TO EVENTS");
         subscriber = new JFUPnPSubscriber(context, this);
 
-        subscriber.subscribeEveryDeviceTypeServices("urn:schemas-upnp-org:device:BinaryLight:1");
-        subscriber.subscribeEveryDeviceTypeServices("urn:schemas-4thline-com:device:simple-test:1");
+//        subscriber.subscribeEveryDeviceTypeServices("urn:schemas-upnp-org:device:BinaryLight:1");
+//        subscriber.subscribeEveryDeviceTypeServices("urn:schemas-4thline-com:device:simple-test:1");
 
     }
 
@@ -54,6 +54,17 @@ public class JFUPnPControl implements UPnPEventListener {
                 System.out.println(" ACTION: " + action.getName());
             }
         }
+
+
+        String deviceType = (String) device.getDescriptions(null).get("UPnP.device.type");
+        if(deviceType.equals("urn:schemas-upnp-org:device:BinaryLight:1")) {
+            subscriber.subscribeEveryDeviceTypeServices(deviceType);
+        } else if (deviceType.equals("urn:schemas-4thline-com:device:simple-test:1")) {
+            subscriber.subscribeEveryDeviceTypeServices(deviceType);
+        }
+
+
+
 
     }
 

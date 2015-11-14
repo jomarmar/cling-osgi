@@ -121,6 +121,8 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
                 //getRequest().send(listener);
 
+//                System.out.println("Sending HTTP request: " + requestMessage);
+
 
 
                 try {
