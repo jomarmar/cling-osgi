@@ -17,6 +17,7 @@ package org.fourthline.cling.osgi.basedriver;
 
 import java.util.logging.Logger;
 
+import org.fourthline.cling.model.message.header.STAllHeader;
 import org.fourthline.cling.osgi.basedriver.discover.ClingRegistryListener;
 import org.fourthline.cling.osgi.basedriver.util.IClingBasedriver;
 import org.osgi.framework.BundleActivator;
@@ -64,7 +65,7 @@ public class Activator implements IClingBasedriver {
         upnpService = new UpnpServiceImpl(new ApacheUpnpServiceConfiguration());
         //discover = new UPnPDiscover(upnpService);
         //present = new UPnPPresent();
-        upnpService.getControlPoint().search();
+        upnpService.getControlPoint().search(new STAllHeader());
 
     }
 

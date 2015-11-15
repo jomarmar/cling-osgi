@@ -16,25 +16,20 @@
 package org.fourthline.cling.osgi.basedriver.discover;
 
 import org.fourthline.cling.controlpoint.SubscriptionCallback;
+import org.fourthline.cling.osgi.basedriver.impl.UPnPDeviceImpl;
 import org.fourthline.cling.osgi.basedriver.impl.UPnPServiceImpl;
 import org.fourthline.cling.osgi.basedriver.util.IClingBasedriver;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentFactory;
 import org.osgi.service.component.ComponentInstance;
 import org.osgi.service.component.annotations.*;
-import org.osgi.service.upnp.UPnPDevice;
 import org.osgi.service.upnp.UPnPEventListener;
 import org.osgi.service.upnp.UPnPService;
-import org.osgi.util.tracker.ServiceTracker;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.model.meta.Device;
 import org.fourthline.cling.model.meta.RemoteDevice;
-import org.fourthline.cling.osgi.basedriver.impl.UPnPDeviceImpl;
 import org.fourthline.cling.registry.DefaultRegistryListener;
 import org.fourthline.cling.registry.Registry;
 
@@ -76,9 +71,9 @@ public class ClingRegistryListener extends DefaultRegistryListener {
 
     private ComponentFactory factory;
     private ComponentInstance instance;
-    //private UPnPDeviceFactory upnpDevice;
+    //private UPnPDeviceImpl upnpDevice;
 
-    private List<UPnPDeviceFactory> deviceList = new ArrayList<>();
+    private List<UPnPDeviceImpl> deviceList = new ArrayList<>();
 
     private Map<UPnPEventListener, List<SubscriptionCallback>> listenerCallbacks = new Hashtable();
 
@@ -131,6 +126,7 @@ public void bindUpnpService (IClingBasedriver service) {
       */
     @Override
     public void deviceAdded(Registry registry, @SuppressWarnings("rawtypes") Device device) {
+        System.out.println("********* DEVICE ADDED: " + device.getDisplayString());
         log.entering(this.getClass().getName(), "deviceAdded", new Object[]{registry, device});
 
         //upnpDevice = new UPnPDeviceImpl(device);
@@ -145,9 +141,9 @@ public void bindUpnpService (IClingBasedriver service) {
 
                 //ServiceRegistration registration = context.registerService(UPnPDevice.class.getName(), upnpDevice, upnpDevice.getDescriptions(null));
                 final Dictionary<String, Device> props = new Hashtable<>();
-                props.put(UPnPDeviceFactory.UPNP_CLING_DEVICE, device);
+                props.put(UPnPDeviceImpl.UPNP_CLING_DEVICE, device);
                 instance = factory.newInstance(props);
-                UPnPDeviceFactory upnpDevice = (UPnPDeviceFactory) instance.getInstance();
+                UPnPDeviceImpl upnpDevice = (UPnPDeviceImpl) instance.getInstance();
                 deviceList.add(upnpDevice);
                 //upnpDevice = fact.getDevice();
                 //deviceBindings.put(device, new UPnPDeviceBinding(registration, tracker));
@@ -195,7 +191,7 @@ public void bindUpnpService (IClingBasedriver service) {
 
         Filter filter = (Filter) props.get(UPnPEventListener.UPNP_FILTER);
         if (filter != null) {
-            for (UPnPDeviceFactory device : deviceList) {
+            for (UPnPDeviceImpl device : deviceList) {
                 List<SubscriptionCallback> callbacks = new ArrayList<SubscriptionCallback>();
                 UPnPServiceImpl[] services = (UPnPServiceImpl[]) device.getServices();
                 if (services != null) {

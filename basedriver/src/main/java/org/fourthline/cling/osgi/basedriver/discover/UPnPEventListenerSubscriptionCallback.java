@@ -17,6 +17,7 @@ package org.fourthline.cling.osgi.basedriver.discover;
 
 import org.fourthline.cling.model.UnsupportedDataException;
 import org.fourthline.cling.model.gena.RemoteGENASubscription;
+import org.fourthline.cling.osgi.basedriver.impl.UPnPDeviceImpl;
 import org.osgi.service.upnp.UPnPDevice;
 import org.osgi.service.upnp.UPnPEventListener;
 import org.fourthline.cling.controlpoint.SubscriptionCallback;
@@ -26,7 +27,6 @@ import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.state.StateVariableValue;
 import org.fourthline.cling.osgi.basedriver.impl.UPnPServiceImpl;
 import org.fourthline.cling.osgi.basedriver.util.OSGiDataConverter;
-import org.fourthline.cling.osgi.basedriver.impl.UPnPDeviceImpl;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -39,11 +39,11 @@ import java.util.Map;
  */
 public class UPnPEventListenerSubscriptionCallback extends SubscriptionCallback {
 
-    private UPnPDeviceFactory device;
+    private UPnPDeviceImpl device;
     private UPnPServiceImpl service;
     private UPnPEventListener listener;
 
-    protected UPnPEventListenerSubscriptionCallback(UPnPDeviceFactory device, UPnPServiceImpl service, UPnPEventListener listener) {
+    protected UPnPEventListenerSubscriptionCallback(UPnPDeviceImpl device, UPnPServiceImpl service, UPnPEventListener listener) {
         super(service.getService());
 
         this.device = device;

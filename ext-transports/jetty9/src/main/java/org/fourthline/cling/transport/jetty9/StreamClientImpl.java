@@ -25,13 +25,13 @@ import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpHeader;
 import org.fourthline.cling.model.message.*;
 import org.fourthline.cling.model.message.header.ContentTypeHeader;
-import org.fourthline.cling.model.message.header.UpnpHeader;
 import org.fourthline.cling.transport.spi.AbstractStreamClient;
 import org.fourthline.cling.transport.spi.InitializationException;
 import org.fourthline.cling.transport.spi.StreamClient;
 import org.seamless.util.MimeType;
 
 import java.io.UnsupportedEncodingException;
+import java.net.NoRouteToHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -133,11 +133,14 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
 
                 } catch (ExecutionException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                    if(e.getCause() instanceof NoRouteToHostException) {
+                        log.warning("No route to host: " + requestMessage.getUri().toString()+". Check firewall");
+                    }
                 }
 
                 catch (TimeoutException e) {
-                    e.printStackTrace();
+                    log.warning("Timeout sending request: " + requestMessage.getUri().toString()+". Check network");
                 }
 
                 return null;

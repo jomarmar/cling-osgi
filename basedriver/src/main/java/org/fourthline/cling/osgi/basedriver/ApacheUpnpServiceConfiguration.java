@@ -18,6 +18,9 @@ package org.fourthline.cling.osgi.basedriver;
 import org.fourthline.cling.DefaultUpnpServiceConfiguration;
 //import org.fourthline.cling.transport.impl.jetty.StreamClientConfigurationImpl;
 //import org.fourthline.cling.transport.impl.jetty.StreamClientImpl;
+import org.fourthline.cling.ManagedUpnpServiceConfiguration;
+
+
 import org.fourthline.cling.transport.jetty9.StreamClientConfigurationImpl;
 import org.fourthline.cling.transport.jetty9.StreamClientImpl;
 

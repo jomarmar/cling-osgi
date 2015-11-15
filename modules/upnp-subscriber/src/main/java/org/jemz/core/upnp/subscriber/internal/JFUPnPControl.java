@@ -47,13 +47,15 @@ public class JFUPnPControl implements UPnPEventListener {
             cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC
     )
     public void bindUPnPDevice(UPnPDevice device) {
-        System.out.println("REGISTERING UPNPDEVICE: " + device.getDescriptions(String.valueOf(Locale.getDefault())));
-        for(UPnPService service : device.getServices()) {
-            System.out.println("SERVICE: " + service.getId() + " TYPE: " + service.getType());
-            for(UPnPAction action : service.getActions()) {
-                System.out.println(" ACTION: " + action.getName());
-            }
-        }
+        System.out.println("REGISTER DEVICE: " + device.getDescriptions(null).get(UPnPDevice.FRIENDLY_NAME) + " MODEL: " + device.getDescriptions(null).get(UPnPDevice.MODEL_NAME) + " DESCRIPTION: " + device.getDescriptions(null).get(UPnPDevice.MODEL_DESCRIPTION));
+
+//        System.out.println("REGISTERING UPNPDEVICE: " + device.getDescriptions(String.valueOf(Locale.getDefault())));
+//        for(UPnPService service : device.getServices()) {
+//            System.out.println("SERVICE: " + service.getId() + " TYPE: " + service.getType());
+//            for(UPnPAction action : service.getActions()) {
+//                System.out.println(" ACTION: " + action.getName());
+//            }
+//        }
 
 
         String deviceType = (String) device.getDescriptions(null).get("UPnP.device.type");
