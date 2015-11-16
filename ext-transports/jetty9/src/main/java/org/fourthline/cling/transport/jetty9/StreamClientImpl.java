@@ -201,6 +201,26 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         return applyRequestBody(requestMessage, request);
     }
 
+    @Override
+    public StreamResponseMessage sendRequest(StreamRequestMessage requestMessage) throws InterruptedException {
+        //return new HttpContentExchange(getConfiguration(), client, requestMessage);
+        Request request = getRequest(requestMessage);
+        if(request == null) {
+            return null;
+        }
+
+        ContentResponse resp = null;
+        try {
+            resp = request.send();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return createResponse(resp);
+    }
+
 //    @Override
 //    public StreamResponseMessage sendRequest(StreamRequestMessage requestMessage) throws InterruptedException {
 //
