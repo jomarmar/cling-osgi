@@ -260,16 +260,25 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
     protected StreamResponseMessage createResponse(ContentResponse response) {
         // Status
-        UpnpResponse responseOperation =
-                new UpnpResponse(response.getStatus(),
-                        UpnpResponse.Status.getByStatusCode(response.getStatus()).getStatusMsg()
-                );
+
+        UpnpResponse responseOperation = null;
+        String contentType = response.getHeaders().get( "CONTENT-TYPE");
+        if(contentType.indexOf("text/xml") >= 0 ||
+                contentType.indexOf("application/xml") >=0) {
+            responseOperation =
+                    new UpnpResponse(response.getStatus(),
+                            UpnpResponse.Status.getByStatusCode(response.getStatus()).getStatusMsg()
+                    );
+        } else {
+            responseOperation =
+                    new UpnpResponse(501, "Invalid content type " + contentType);
+        }
+
 
         if (log.isLoggable(Level.FINE))
             log.fine("Received response: " + responseOperation);
 
         StreamResponseMessage responseMessage = new StreamResponseMessage(responseOperation);
-
         // Headers
         UpnpHeaders headers = new UpnpHeaders();
         HttpFields responseFields = response.getHeaders();
@@ -306,6 +315,7 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
         if (log.isLoggable(Level.FINE))
             log.fine("Response message complete: " + responseMessage);
+
         return responseMessage;
     }
 

@@ -126,7 +126,6 @@ public void bindUpnpService (IClingBasedriver service) {
       */
     @Override
     public void deviceAdded(Registry registry, @SuppressWarnings("rawtypes") Device device) {
-        System.out.println("********* DEVICE ADDED: " + device.getDisplayString());
         log.entering(this.getClass().getName(), "deviceAdded", new Object[]{registry, device});
 
         //upnpDevice = new UPnPDeviceImpl(device);
