@@ -1,19 +1,4 @@
-/*
- * Copyright (C) 2013 4th Line GmbH, Switzerland
- *
- * The contents of this file are subject to the terms of either the GNU
- * Lesser General Public License Version 2 or later ("LGPL") or the
- * Common Development and Distribution License Version 1 or later
- * ("CDDL") (collectively, the "License"). You may not use this file
- * except in compliance with the License. See LICENSE.txt for more
- * information.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- */
-
-package org.fourthline.cling.transport.jetty9;
+package org.jemz.core.upnp.cling.transport.jetty9;
 
 
 import org.eclipse.jetty.client.HttpClient;
@@ -41,13 +26,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implementation based on Jetty 8 client API.
+ * Implementation based on Jetty 9 client API.
  * <p>
  * This implementation works on Android, dependencies are the <code>jetty-client</code>
  * Maven module.
  * </p>
  *
- * @author Christian Bauer
+ * @author jmartinez
  */
 public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigurationImpl,FutureResponseListener> {
 
@@ -62,26 +47,8 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         log.info("Starting Jetty HttpClient...");
         client = new HttpClient();
 
-        // Jetty client needs threads for its internal expiration routines, which we don't need but
-        // can't disable, so let's abuse the request executor service for this
-//        client.setThreadPool(
-//            new ExecutorThreadPool(getConfiguration().getRequestExecutorService()) {
-//                @Override
-//                protected void doStop() throws Exception {
-//                    // Do nothing, don't shut down the Cling ExecutorService when Jetty stops!
-//                }
-//            }
-//        );
-
-        // These are some safety settings, we should never run into these timeouts as we
-        // do our own expiration checking
-//        client.setTimeout((configuration.getTimeoutSeconds()+5) * 1000);
         client.setIdleTimeout((configuration.getTimeoutSeconds()+5) * 1000);
-        //client.setExecutor(Executors.newFixedThreadPool(4));
         client.setConnectTimeout((configuration.getTimeoutSeconds()+5) * 1000);
-        ;
-//        client.setMaxRetries(configuration.getRequestRetryCount());
-
         try {
             client.start();
         } catch (Exception ex) {
@@ -119,12 +86,6 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
                 if (log.isLoggable(Level.FINE))
                     log.fine("Sending HTTP request: " + requestMessage);
 
-                //getRequest().send(listener);
-
-//                System.out.println("Sending HTTP request: " + requestMessage);
-
-
-
                 try {
                     ContentResponse response = listener.get(configuration.getTimeoutSeconds(), TimeUnit.SECONDS);
 
@@ -144,26 +105,6 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
                 }
 
                 return null;
-//                client.send(exchange);
-//                int exchangeState = exchange.waitForDone();
-//
-//                if (exchangeState == HttpExchange.STATUS_COMPLETED) {
-//                    try {
-//                        return exchange.createResponse();
-//                    } catch (Throwable t) {
-//                        log.log(Level.WARNING, "Error reading response: " + requestMessage, Exceptions.unwrap(t));
-//                        return null;
-//                    }
-//                } else if (exchangeState == HttpExchange.STATUS_CANCELLED) {
-//                    // That's ok, happens when we abort the exchange after timeout
-//                    return null;
-//                } else if (exchangeState == HttpExchange.STATUS_EXCEPTED) {
-//                    // The warnings of the "excepted" condition are logged in HttpContentExchange
-//                    return null;
-//                } else {
-//                    log.warning("Unhandled HTTP exchange status: " + exchangeState);
-//                    return null;
-//                }
             }
         };
     }
@@ -213,9 +154,12 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         try {
             resp = request.send();
         } catch (TimeoutException e) {
-            e.printStackTrace();
+            if(e.getCause() instanceof NoRouteToHostException) {
+                log.warning("No route to host: " + requestMessage.getUri().toString()+". Check firewall");
+            }
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            log.warning("Timeout sending request: " + requestMessage.getUri().toString()+". Check network");
+            return null;
         }
 
         return createResponse(resp);

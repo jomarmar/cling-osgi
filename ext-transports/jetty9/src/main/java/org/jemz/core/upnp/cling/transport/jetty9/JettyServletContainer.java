@@ -13,24 +13,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-package org.fourthline.cling.transport.jetty9;
+package org.jemz.core.upnp.cling.transport.jetty9;
 
 //import org.eclipse.jetty.server.AbstractHttpConnection;
-import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 //import org.eclipse.jetty.server.bio.SocketConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.fourthline.cling.transport.spi.ServletContainerAdapter;
 
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.concurrent.ExecutorService;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**

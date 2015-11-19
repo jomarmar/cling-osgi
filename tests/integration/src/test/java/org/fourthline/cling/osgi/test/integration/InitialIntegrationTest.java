@@ -105,7 +105,7 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
 
                 mavenBundle().groupId("commons-codec").artifactId("commons-codec").versionAsInProject().start(),
 
-                mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-transport-jetty9").versionAsInProject().start(),
+                mavenBundle().groupId("org.jemz.core").artifactId("jf-upnp-cling-transport-jetty9").versionAsInProject().start(),
 
                 mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-core").versionAsInProject().start(),
                 mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-osgi-tests-common").versionAsInProject().start(),

@@ -9,17 +9,19 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <name>Cling Transport Jetty 9</name>
-    <artifactId>cling-transport-jetty9</artifactId>
+    <groupId>org.jemz.core</groupId>
+    <artifactId>jf-upnp-cling-transport-jetty9</artifactId>
     <packaging>bundle</packaging>
 
     <properties>
-        <SymbolicName>org.fourthline.cling.transport.jetty9</SymbolicName>
+        <bundle.symbolicName>${artifactId}</bundle.symbolicName>
+        <bundle.namespace>org.jemz.core.upnp.cling.transport.jetty9</bundle.namespace>
     </properties>
 
+    <name>${bundle.symbolicName}</name>
+
     <build>
-	<finalName>${SymbolicName}.${project.version}</finalName>
-        <plugins>
+	    <plugins>
 
             <!-- Build an OSGi bundle -->
             <plugin>
@@ -27,9 +29,9 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>${SymbolicName}</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
                         <Bundle-Version>${project.version}</Bundle-Version>
-                        <Export-Package>org.fourthline.cling.transport.jetty9.*;version="${project.version}"</Export-Package>
+                        <Export-Package>${bundle.namespace}.*;version="${project.version}"</Export-Package>
                         <!-- | each module can override these defaults in their osgi.bnd file -->
                         <_include>-osgi.bnd</_include>
                     </instructions>

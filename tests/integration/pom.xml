@@ -147,8 +147,8 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.fourthline.cling.osgi</groupId>
-            <artifactId>cling-transport-jetty9</artifactId>
+            <groupId>org.jemz.core</groupId>
+            <artifactId>jf-upnp-cling-transport-jetty9</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>

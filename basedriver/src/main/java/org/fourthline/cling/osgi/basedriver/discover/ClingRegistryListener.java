@@ -57,21 +57,14 @@ import java.util.logging.Logger;
  * @author Bruce Green
  */
 
-@Component (
-
-)
+@Component ()
 public class ClingRegistryListener extends DefaultRegistryListener {
 
     private static final Logger log = Logger.getLogger(ClingRegistryListener.class.getName());
 
-    //private Map<Device, UPnPDeviceBinding> deviceBindings = new Hashtable<Device, UPnPDeviceBinding>();
-    private BundleContext context;
-
     private UpnpService upnpService;
-
     private ComponentFactory factory;
     private ComponentInstance instance;
-    //private UPnPDeviceImpl upnpDevice;
 
     private List<UPnPDeviceImpl> deviceList = new ArrayList<>();
 
@@ -87,37 +80,16 @@ public class ClingRegistryListener extends DefaultRegistryListener {
 
     }
 
-//    class UPnPDeviceBinding {
-//        private ServiceRegistration reference;
-//        private ServiceTracker tracker;
-//
-//        UPnPDeviceBinding(ServiceRegistration reference, ServiceTracker tracker) {
-//            this.reference = reference;
-//            this.tracker = tracker;
-//        }
-//
-//        public ServiceRegistration getServiceRegistration() {
-//            return reference;
-//        }
-//
-//        public ServiceTracker getServiceTracker() {
-//            return tracker;
-//        }
-//    }
-@Reference(
-        service = IClingBasedriver.class
-)
-public void bindUpnpService (IClingBasedriver service) {
+    @Reference(
+            service = IClingBasedriver.class
+    )
+    public void bindUpnpService (IClingBasedriver service) {
     this.upnpService = service.getUpnpService();
 }
 
     public void unbindUpnpService (IClingBasedriver service) {
         this.upnpService = null;
     }
-
-//    public ClingRegistryListener(UpnpService upnpService) {
-//        this.upnpService = upnpService;
-//    }
 
     /*
       * When an external device is discovered wrap it with UPnPDeviceImpl,
@@ -128,24 +100,16 @@ public void bindUpnpService (IClingBasedriver service) {
     public void deviceAdded(Registry registry, @SuppressWarnings("rawtypes") Device device) {
         log.entering(this.getClass().getName(), "deviceAdded", new Object[]{registry, device});
 
-        //upnpDevice = new UPnPDeviceImpl(device);
         if (device instanceof RemoteDevice) {
             String string = String.format("(%s=%s)",
                                           Constants.OBJECTCLASS, UPnPEventListener.class.getName()
             );
             try {
-//                Filter filter = context.createFilter(string);
-//                UPnPEventListenerTracker tracker = new UPnPEventListenerTracker(context, filter, upnpService, upnpDevice);
-//                tracker.open();
-
-                //ServiceRegistration registration = context.registerService(UPnPDevice.class.getName(), upnpDevice, upnpDevice.getDescriptions(null));
                 final Dictionary<String, Device> props = new Hashtable<>();
                 props.put(UPnPDeviceImpl.UPNP_CLING_DEVICE, device);
                 instance = factory.newInstance(props);
                 UPnPDeviceImpl upnpDevice = (UPnPDeviceImpl) instance.getInstance();
                 deviceList.add(upnpDevice);
-                //upnpDevice = fact.getDevice();
-                //deviceBindings.put(device, new UPnPDeviceBinding(registration, tracker));
             } catch (Exception e) {
                 log.severe(String.format("Cannot add remote device (%s).", device.getIdentity().getUdn().toString()));
                 log.severe(e.getMessage());
@@ -157,21 +121,10 @@ public void bindUpnpService (IClingBasedriver service) {
     public void deviceRemoved(Registry registry, @SuppressWarnings("rawtypes") Device device) {
         log.entering(this.getClass().getName(), "deviceRemoved", new Object[]{registry, device});
         instance.dispose();
-//        if (device instanceof RemoteDevice) {
-//            UPnPDeviceBinding data = deviceBindings.get(device);
-//            if (data == null) {
-//                log.warning(String.format("Unknown device %s removed.", device.getIdentity().getUdn().toString()));
-//            } else {
-//                data.getServiceRegistration().unregister();
-//                data.getServiceTracker().close();
-//                deviceBindings.remove(device);
-//            }
-//        }
     }
 
     @Reference(target = "(component.factory=upnpdevice.factory)")
     public void bindFactory(final ComponentFactory factory) {
-
         this.factory = factory;
     }
 
@@ -186,7 +139,6 @@ public void bindUpnpService (IClingBasedriver service) {
     )
     public void bindUPnPEventListener(UPnPEventListener listener, Map<String, ?> props) {
         log.entering(this.getClass().getName(), "bindUPnPListener");
-
 
         Filter filter = (Filter) props.get(UPnPEventListener.UPNP_FILTER);
         if (filter != null) {
