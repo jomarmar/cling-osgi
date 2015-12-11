@@ -207,6 +207,9 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
         UpnpResponse responseOperation = null;
         String contentType = response.getHeaders().get( "CONTENT-TYPE");
+        if(contentType == null) {
+            return null;
+        }
         if(contentType.indexOf("text/xml") >= 0 ||
                 contentType.indexOf("application/xml") >=0) {
             responseOperation =
