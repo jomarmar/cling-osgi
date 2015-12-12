@@ -204,24 +204,37 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
 
     protected StreamResponseMessage createResponse(ContentResponse response) {
         // Status
+        System.out.println("CREATE RESPONSE URI: " + response.getRequest().getURI().toString());
+        System.out.println("CREATE RESPONSE STATUS: " + response.getStatus());
+        System.out.println("CREATE RESPONSE HEADERS: " + response.getHeaders());
+
+        try {
+            System.out.println("CREATE RESPONSE CONTENT: " + response.getContentAsString());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
 
         UpnpResponse responseOperation = null;
-        String contentType = response.getHeaders().get( "CONTENT-TYPE");
-        if(contentType == null) {
-            return null;
-        }
-        if(contentType.indexOf("text/xml") >= 0 ||
-                contentType.indexOf("application/xml") >=0) {
+        String contentType = response.getMediaType();  //response.getHeaders().get( "CONTENT-TYPE");
+        if(contentType != null) {
+           if (contentType.indexOf("text/xml") >= 0 ||
+                    contentType.indexOf("application/xml") >= 0) {
+                responseOperation =
+                        new UpnpResponse(response.getStatus(),
+                                UpnpResponse.Status.getByStatusCode(response.getStatus()).getStatusMsg()
+                        );
+            } else {
+                responseOperation =
+                        new UpnpResponse(501, "Invalid content type " + contentType);
+            }
+
+        } else {
             responseOperation =
                     new UpnpResponse(response.getStatus(),
                             UpnpResponse.Status.getByStatusCode(response.getStatus()).getStatusMsg()
                     );
-        } else {
-            responseOperation =
-                    new UpnpResponse(501, "Invalid content type " + contentType);
         }
-
-
         if (log.isLoggable(Level.FINE))
             log.fine("Received response: " + responseOperation);
 

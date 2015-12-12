@@ -16,12 +16,12 @@
 package org.fourthline.cling.osgi.basedriver;
 
 import org.fourthline.cling.DefaultUpnpServiceConfiguration;
-//import org.fourthline.cling.transport.impl.jetty.StreamClientConfigurationImpl;
-//import org.fourthline.cling.transport.impl.jetty.StreamClientImpl;
 
 
 import org.jemz.core.upnp.cling.transport.jetty9.StreamClientConfigurationImpl;
 import org.jemz.core.upnp.cling.transport.jetty9.StreamClientImpl;
+//import org.jemz.core.upnp.cling.transport.jetty8.StreamClientConfigurationImpl;
+//import org.jemz.core.upnp.cling.transport.jetty8.StreamClientImpl;
 
 import org.fourthline.cling.transport.impl.StreamServerConfigurationImpl;
 import org.fourthline.cling.transport.impl.StreamServerImpl;

@@ -3,11 +3,12 @@ package org.fourthline.cling.osgi.basedriver;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.model.message.header.STAllHeader;
-import org.fourthline.cling.model.meta.Device;
-import org.fourthline.cling.model.meta.LocalDevice;
-import org.fourthline.cling.model.meta.RemoteDevice;
+import org.fourthline.cling.model.meta.*;
 import org.fourthline.cling.registry.Registry;
 import org.fourthline.cling.registry.RegistryListener;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by jmartinez on 11/15/15.
@@ -15,6 +16,7 @@ import org.fourthline.cling.registry.RegistryListener;
 public class Main {
     public static void main(String[] args) throws Exception {
 
+        TestSubscriptionCallback cb = null;
 
         // UPnP discovery is asynchronous, we need a callback
         RegistryListener listener = new RegistryListener() {
@@ -55,6 +57,8 @@ public class Main {
                 System.out.println(
                         "Local device added: " + device.getDisplayString()
                 );
+
+
             }
 
             public void localDeviceRemoved(Registry registry, LocalDevice device) {
@@ -90,6 +94,20 @@ public class Main {
 
         // Let's wait 10 seconds for them to respond
         System.out.println("Waiting 10 seconds before shutting down...");
+        Thread.sleep(10000);
+
+        Collection<Device> devices = upnpService.getControlPoint().getRegistry().getDevices();
+        for(Device device : devices) {
+            if(device.getType().toString().equals("urn:schemas-upnp-org:device:BinaryLight:1")) {
+                for(Service service : device.getServices()) {
+                    cb = new TestSubscriptionCallback( service);
+                    upnpService.getControlPoint().execute(cb);
+                }
+            }
+
+        }
+
+
         Thread.sleep(10000);
 
         // Release all resources and advertise BYEBYE to other UPnP devices

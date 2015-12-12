@@ -92,7 +92,7 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
                         .useDeployFolder(false),
                 keepRuntimeFolder(),
                 logLevel(LogLevelOption.LogLevel.INFO),
-                //KarafDistributionOption.features(karafStandardRepo, "eventadmin, jetty/8.1.14.v20131031"),
+                //KarafDistributionOption.features(karafStandardRepo, "scr, eventadmin, jetty/8.1.14.v20131031"),
                 KarafDistributionOption.features(karafStandardRepo, "eventadmin, jetty, scr"), // jetty 9
 
 
@@ -106,6 +106,7 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
                 mavenBundle().groupId("commons-codec").artifactId("commons-codec").versionAsInProject().start(),
 
                 mavenBundle().groupId("org.jemz.core").artifactId("jf-upnp-cling-transport-jetty9").versionAsInProject().start(),
+                //mavenBundle().groupId("org.jemz.core").artifactId("jf-upnp-cling-transport-jetty8").versionAsInProject().start(),
 
                 mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-core").versionAsInProject().start(),
                 mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("cling-osgi-tests-common").versionAsInProject().start(),
