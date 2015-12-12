@@ -205,14 +205,14 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
     protected StreamResponseMessage createResponse(ContentResponse response) {
         // Status
         System.out.println("CREATE RESPONSE URI: " + response.getRequest().getURI().toString());
-        System.out.println("CREATE RESPONSE STATUS: " + response.getStatus());
-        System.out.println("CREATE RESPONSE HEADERS: " + response.getHeaders());
-
-        try {
-            System.out.println("CREATE RESPONSE CONTENT: " + response.getContentAsString());
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+//        System.out.println("CREATE RESPONSE STATUS: " + response.getStatus());
+//        System.out.println("CREATE RESPONSE HEADERS: " + response.getHeaders());
+//
+//        try {
+//            System.out.println("CREATE RESPONSE CONTENT: " + response.getContentAsString());
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
 
 
         UpnpResponse responseOperation = null;
