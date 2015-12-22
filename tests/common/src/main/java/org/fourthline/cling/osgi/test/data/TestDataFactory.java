@@ -29,7 +29,7 @@ public class TestDataFactory {
 	static public TestDataFactory instance;
 	
 	private String file = DEFAULT_FILE;
-	private String key = DEFAULT_KEY;
+	//private String key = DEFAULT_KEY;
 	private Properties properties;
 	private Map<String, TestData> data;
 
@@ -62,13 +62,13 @@ public class TestDataFactory {
 	}
 
 	public TestDataFactory() {
-		file = System.getProperty(key, file);
+		file = System.getProperty(DEFAULT_KEY, file);
 	}
 	
 	public TestData getTestData(String id) {
 		
 		if (data == null) {
-			data = new Hashtable<String, TestData>();
+			data = new Hashtable<>();
 			Properties properties = getProperties();
 			
 			for (Object key : properties.keySet()) {

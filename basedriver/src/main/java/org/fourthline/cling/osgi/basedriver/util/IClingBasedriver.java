@@ -7,6 +7,6 @@ import org.fourthline.cling.UpnpService;
  */
 public interface IClingBasedriver {
 
-    public UpnpService getUpnpService();
+    UpnpService getUpnpService();
 
 }

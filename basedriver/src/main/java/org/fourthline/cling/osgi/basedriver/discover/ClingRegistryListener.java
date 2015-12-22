@@ -66,7 +66,7 @@ public class ClingRegistryListener extends DefaultRegistryListener {
     private ComponentFactory factory;
     private ComponentInstance instance;
 
-    private List<UPnPDeviceImpl> deviceList = new ArrayList<>();
+    private final List<UPnPDeviceImpl> deviceList = new ArrayList<>();
 
     private Map<UPnPEventListener, List<SubscriptionCallback>> listenerCallbacks = new Hashtable();
 

@@ -183,7 +183,7 @@ public class BaseIntegration {
 				value = Base64.decodeBase64((byte[])value);
 			}
 			else {
-				value = (byte[]) value;
+				value = value;
 			}
 		}
 

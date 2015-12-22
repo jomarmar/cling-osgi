@@ -222,16 +222,16 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
 	private void doSimpleDeviceSetAction(final String name, String testDataId) {
         UPnPDevice dev = findUPnPTestDevice();
 
-        for(UPnPService service : dev.getServices()) {
-            System.out.println("serviceID: " + service.getId());
-        }
+//        for(UPnPService service : dev.getServices()) {
+//            System.out.println("serviceID: " + service.getId());
+//        }
 
         UPnPService service = dev.getService(SERVICE_ID);
         assertNotNull(service);
 
-        for(UPnPAction action : service.getActions()) {
-            System.out.println("ACTIONS: " + action.getName());
-        }
+//        for(UPnPAction action : service.getActions()) {
+//            System.out.println("ACTIONS: " + action.getName());
+//        }
 
         UPnPAction action = service.getAction("GetAllVariables");
         assertNotNull(action);
@@ -256,12 +256,12 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
         TestData d = new TestDataFactory().getInstance().getTestData(testDataId);
         Properties props = new Properties();
         for(String argName : setAction.getInputArgumentNames()) {
-            System.out.printf("@@@ argument: %s\n", argName);
-            System.out.printf("@@@ type: %s\n", argName);
+//            System.out.printf("@@@ argument: %s\n", argName);
+//            System.out.printf("@@@ type: %s\n", argName);
 
             Object object = d.getOSGiUPnPValue(argName, /*type*/argName);
 
-            System.out.println("OBJECT: " + object);
+//            System.out.println("OBJECT: " + object);
 
             props.put(argName, object);
 
@@ -276,7 +276,7 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
         try {
             Dictionary result = action.invoke(null);
 
-            System.out.println("RESULT: " + result);
+//            System.out.println("RESULT: " + result);
             Enumeration en = result.keys();
             while(en.hasMoreElements()) {
                 String key = (String) en.nextElement();
