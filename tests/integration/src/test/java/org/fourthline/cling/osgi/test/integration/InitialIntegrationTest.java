@@ -91,7 +91,7 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
                         .unpackDirectory(new File("target/exam"))
                         .useDeployFolder(false),
                 keepRuntimeFolder(),
-                logLevel(LogLevelOption.LogLevel.INFO),
+                logLevel(LogLevelOption.LogLevel.ERROR),
                 //KarafDistributionOption.features(karafStandardRepo, "scr, eventadmin, jetty/8.1.14.v20131031"),
                 KarafDistributionOption.features(karafStandardRepo, "eventadmin, jetty, scr"), // jetty 9
 
