@@ -152,12 +152,7 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jemz.core</groupId>
-            <artifactId>jf-upnp-cling-transport-jetty8</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-        </dependency>
+        
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
