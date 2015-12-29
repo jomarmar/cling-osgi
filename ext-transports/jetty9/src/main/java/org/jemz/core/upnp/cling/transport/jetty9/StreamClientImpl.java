@@ -218,16 +218,16 @@ public class StreamClientImpl extends AbstractStreamClient<StreamClientConfigura
         UpnpResponse responseOperation = null;
         String contentType = response.getMediaType();  //response.getHeaders().get( "CONTENT-TYPE");
         if(contentType != null) {
-           if (contentType.indexOf("text/xml") >= 0 ||
-                    contentType.indexOf("application/xml") >= 0) {
+//           if (contentType.indexOf("text/xml") >= 0 ||
+//                    contentType.indexOf("application/xml") >= 0) {
                 responseOperation =
                         new UpnpResponse(response.getStatus(),
                                 UpnpResponse.Status.getByStatusCode(response.getStatus()).getStatusMsg()
                         );
-            } else {
-                responseOperation =
-                        new UpnpResponse(501, "Invalid content type " + contentType);
-            }
+//            } else {
+//                responseOperation =
+//                        new UpnpResponse(501, "Invalid content type " + contentType);
+//            }
 
         } else {
             responseOperation =
