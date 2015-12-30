@@ -97,7 +97,7 @@ public class InitialIntegrationTest extends JFFrameworkTestSupport {
 
 
                 //mavenBundle().groupId("org.osgi").artifactId("org.osgi.core").versionAsInProject().start(),
-                mavenBundle().groupId("org.osgi").artifactId("org.osgi.compendium").versionAsInProject().start(),
+                mavenBundle().groupId("org.osgi").artifactId("org.osgi.service.upnp").versionAsInProject().start(),
 
                 mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("seamless-http").versionAsInProject().start(),
                 mavenBundle().groupId("org.fourthline.cling.osgi").artifactId("seamless-util").versionAsInProject().start(),
