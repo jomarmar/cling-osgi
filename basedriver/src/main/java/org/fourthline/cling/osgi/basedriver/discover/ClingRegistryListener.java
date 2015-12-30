@@ -201,7 +201,7 @@ public class ClingRegistryListener extends DefaultRegistryListener {
         List<SubscriptionCallback> callbacks = listenerCallbacks.get(listener);
         if (callbacks != null) {
             for (SubscriptionCallback callback : callbacks) {
-                // TODO: callbacks are executed ... don't know how to remove them
+                callback.end();
             }
         }
 
