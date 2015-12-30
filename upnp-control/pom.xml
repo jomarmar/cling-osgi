@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.fourthline.cling.osgi</groupId>
+        <artifactId>cling</artifactId>
+        <version>2.1.0</version>
+        <relativePath>pom.xml</relativePath>
+    </parent>
+
+    <groupId>org.jemz.core</groupId>
+    <artifactId>jf-upnp</artifactId>
+    <packaging>bundle</packaging>
+
+    <properties>
+        <bundle.symbolicName>${project.artifactId}</bundle.symbolicName>
+        <bundle.namespace>org.jemz.core.upnp</bundle.namespace>
+    </properties>
+
+    <name>${bundle.symbolicName}</name>
+
+    <build>
+        <plugins>
+
+            <!-- Build an OSGi bundle -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Export-Package>${bundle.namespace}.*;version="${project.version}"</Export-Package>
+                        <!-- | each module can override these defaults in their osgi.bnd file -->
+                        <_include>-osgi.bnd</_include>
+                    </instructions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Clean up Eclipse mess -->
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>META-INF</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.console</artifactId>
+            <version>${karaf.version}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

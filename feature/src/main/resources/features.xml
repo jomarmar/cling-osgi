@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.3.0" name="jf-upnp-feature">
+    <feature name="jf-upnp-feature" description="jf-upnp-feature" version="${project.version}">
+        <feature prerequisite="true" dependency="true">scr</feature>
+        <feature prerequisite="true" dependency="true">jetty</feature>
+    </feature>
+</features>
