@@ -1,15 +1,22 @@
 package org.jemz.core.upnp.commands;
 
+import org.apache.felix.utils.collections.DictionaryAsMap;
 import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.jemz.core.upnp.IUPnPControl;
+import org.jemz.core.upnp.UPnPTypeUtil;
 import org.osgi.service.component.annotations.*;
 import org.osgi.service.upnp.UPnPAction;
 import org.osgi.service.upnp.UPnPDevice;
 import org.osgi.service.upnp.UPnPService;
 import org.osgi.service.upnp.UPnPStateVariable;
+
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 /**
  * Created by jmartinez on 12/8/15.
@@ -52,8 +59,10 @@ public class UPnPRunAction implements Action {
 
         System.out.println("Running action: " + actionName + "@"+deviceUDN+"["+serviceId+"]");
         System.out.println("\tParams: ");
-        for(String p : params ) {
-            System.out.println("\t\t" + p);
+        if(params != null) {
+            for (String p : params) {
+                System.out.println("\t\t" + p);
+            }
         }
 
 
@@ -73,11 +82,29 @@ public class UPnPRunAction implements Action {
                             System.out.println("ERROR: Action " + actionName + " not found for deviceId: " + deviceUDN);
                             return null;
                         } else {
+                            Dictionary<String, Object> inputArgs = new Hashtable<>();
                             String[] args = action.getInputArgumentNames();
-                            for(int i=0;i<args.length;i++) {
-                                UPnPStateVariable stateVar = action.getStateVariable(args[i]);
-                                stateVar.getJavaDataType();
+                            if(args != null) {
+
+                                for (int i = 0; i < args.length; i++) {
+                                    UPnPStateVariable stateVar = action.getStateVariable(args[i]);
+                                    inputArgs.put(args[i], UPnPTypeUtil.getJavaType(stateVar.getUPnPDataType(), params[i]));
+                                }
                             }
+
+                            Dictionary<String, Object> result = action.invoke(inputArgs);
+
+                            if(result != null) {
+                                System.out.println("RESULT: ");
+                                Enumeration<String> it = result.keys();
+                                while (it.hasMoreElements()) {
+                                    String k = it.nextElement();
+                                    System.out.println("\t" + k + ": " + result.get(k));
+                                }
+                            }
+
+                            System.out.println("Action successfully executed");
+
                         }
 
                     }
