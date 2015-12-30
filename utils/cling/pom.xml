@@ -20,7 +20,7 @@
     <version>${wrapped.version}</version>
 
 
-    <name>${bundle.symbolicName} ${wrapped.version} [osgi]</name>
+    <name>Cling OSGi Core</name>
 
     <packaging>bundle</packaging>
 

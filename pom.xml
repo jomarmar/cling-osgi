@@ -22,7 +22,7 @@
         <module>tests</module>
     </modules>
 
-    <name>Cling</name>
+    <name>Cling OSGi</name>
     <url>http://github.com/jomarmar/cling-osgi</url>
 
     <licenses>
